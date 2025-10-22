@@ -96,7 +96,7 @@ export default function Signup() {
         </header>
       )}
 
-      <section className="relative flex flex-col items-center justify-center text-white h-auto xl:py-10">
+      <section className="relative flex flex-col items-center justify-center text-white h-auto xl:py-10 py-10 px-5">
         <div className="absolute inset-0 -z-10">
           <Image src="/pic4.png" alt="Background" fill className="object-cover object-center" priority />
         </div>
@@ -111,21 +111,21 @@ export default function Signup() {
 
               {/* NAME */}
               <div className="flex flex-col xl:flex-row gap-4 w-full">
-                <Input name="firstname" placeholder="First Name" className="h-16 bg-white" value={formData.firstname} onChange={handleChange} />
-                <Input name="middlename" placeholder="Middle Name" className="h-16 bg-white" value={formData.middlename} onChange={handleChange} />
-                <Input name="lastname" placeholder="Last Name" className="h-16 bg-white" value={formData.lastname} onChange={handleChange} />
+                <Input name="firstname" placeholder="First Name" className="h-16 bg-white/20 text-white placeholder:text-white border-none" value={formData.firstname} onChange={handleChange} />
+                <Input name="middlename" placeholder="Middle Name" className="h-16 bg-white/20 text-white placeholder:text-white border-none" value={formData.middlename} onChange={handleChange} />
+                <Input name="lastname" placeholder="Last Name" className="h-16 bg-white/20 text-white placeholder:text-white border-none" value={formData.lastname} onChange={handleChange} />
               </div>
 
               {/* SEX & CIVIL STATUS & DOB */}
               <div className="flex flex-col xl:flex-row gap-4 w-full">
-                <select name="sex" className="h-16 bg-white text-black rounded-md px-4" value={formData.sex} onChange={handleChange}>
+                <select name="sex" className="h-16 bg-white/20 text-black placeholder:text-white border-none rounded-md px-4" value={formData.sex} onChange={handleChange}>
                   <option value="">Select Sex</option>
                   <option value="Male">Male</option>
                   <option value="Female">Female</option>
                   <option value="Other">Other</option>
                 </select>
 
-                <select name="civil_status" className="h-16 bg-white text-black rounded-md px-4" value={formData.civil_status} onChange={handleChange}>
+                <select name="civil_status" className="h-16 text-black bg-white/20 placeholder:text-white border-none rounded-md px-4" value={formData.civil_status} onChange={handleChange}>
                   <option value="">Civil Status</option>
                   <option value="Single">Single</option>
                   <option value="Married">Married</option>
@@ -133,20 +133,20 @@ export default function Signup() {
                   <option value="Widowed">Widowed</option>
                 </select>
 
-                <Input name="date_of_birth" type="date" className="h-16 bg-white" value={formData.date_of_birth} onChange={handleChange} />
+                <Input name="date_of_birth" type="date" className="h-16 bg-white/20 text-white placeholder:text-white border-none" value={formData.date_of_birth} onChange={handleChange} />
               </div>
 
               {/* WEIGHT & HEIGHT & ADDRESS */}
               <div className="flex flex-col xl:flex-row gap-4 w-full">
-                <Input name="weight" type="number" step="0.01" placeholder="Weight (kg)" className="h-16 bg-white" value={formData.weight} onChange={handleChange} />
-                <Input name="height" type="number" step="0.01" placeholder="Height (cm)" className="h-16 bg-white" value={formData.height} onChange={handleChange} />
-                <Input name="address" placeholder="Address" className="h-16 bg-white" value={formData.address} onChange={handleChange} />
+                <Input name="weight" type="number" step="0.01" placeholder="Weight (kg)" className="h-16 bg-white/20 text-white placeholder:text-white border-none" value={formData.weight} onChange={handleChange} />
+                <Input name="height" type="number" step="0.01" placeholder="Height (cm)" className="h-16 bg-white/20 text-white placeholder:text-white border-none" value={formData.height} onChange={handleChange} />
+                <Input name="address" placeholder="Address" className="h-16 bg-white/20 text-white placeholder:text-white border-none" value={formData.address} onChange={handleChange} />
               </div>
 
               {/* EMAIL & PASSWORD */}
               <div className="flex flex-col xl:flex-row gap-4 w-full">
-                <Input name="email" type="email" placeholder="Email" className="h-16 bg-white" value={formData.email} onChange={handleChange} />
-                <Input name="password" type="password" placeholder="Enter Password" className="h-16 bg-white" value={formData.password} onChange={handleChange} />
+                <Input name="email" type="email" placeholder="Email" className="h-16 bg-white/20 text-white placeholder:text-white border-none" value={formData.email} onChange={handleChange} />
+                <Input name="password" type="password" placeholder="Enter Password" className="h-16 bg-white/20 text-white placeholder:text-white border-none" value={formData.password} onChange={handleChange} />
               </div>
 
               <div className="w-full">

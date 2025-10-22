@@ -7,6 +7,8 @@ import { Icon } from "@iconify-icon/react";
 import Footer from "@/components/Footer/footer";
 import { Card } from "@/components/ui/card";
 import dynamic from 'next/dynamic';
+import { useEffect, useState } from "react";
+import Link from "next/link";
 
 // Dynamically import the map component (client-side only)
 const GymMap = dynamic(() => import('@/components/gymmap/GymMap'), {
@@ -18,8 +20,38 @@ const GymMap = dynamic(() => import('@/components/gymmap/GymMap'), {
   ),
 });
 
+interface Package {
+  package_id: number
+  title: string
+  description: string
+  picture: string
+  price: number
+  created_at: string
+}
+
 export default function Home() {
   const isMobile = useIsMobile();
+  const [packages, setPackages] = useState<Package[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchPackages();
+  }, []);
+
+  const fetchPackages = async () => {
+    try {
+      const response = await fetch('http://localhost:4000/api/getpackages');
+      if (response.ok) {
+        const data = await response.json();
+        // Limit to 3 packages for home page
+        setPackages(data.slice(0, 3));
+      }
+    } catch (error) {
+      console.error('Error fetching packages:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -119,69 +151,121 @@ export default function Home() {
             OUR <span className="text-amber-300">MEMBERSHIP</span>
           </h2>
 
-          <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-            <div className="bg-muted/50 aspect-video rounded-xl" />
-            <div className="bg-muted/50 aspect-video rounded-xl" />
-            <div className="bg-muted/50 aspect-video rounded-xl" />
-          </div>
+          {loading ? (
+            <div className="flex items-center justify-center py-20">
+              <div className="text-xl text-gray-400">Loading packages...</div>
+            </div>
+          ) : packages.length === 0 ? (
+            <div className="grid auto-rows-min gap-4 md:grid-cols-3">
+              <div className="bg-muted/50 aspect-video rounded-xl" />
+              <div className="bg-muted/50 aspect-video rounded-xl" />
+              <div className="bg-muted/50 aspect-video rounded-xl" />
+            </div>
+          ) : (
+            <>
+              <div className="grid auto-rows-min gap-4 md:grid-cols-3">
+                {packages.map((pkg) => (
+                  <Card 
+                    key={pkg.package_id} 
+                    className="bg-zinc-900 border-zinc-800 overflow-hidden"
+                  >
+                    <div className="relative aspect-video">
+                      <Image 
+                        src={pkg.picture} 
+                        alt={pkg.title}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                    <div className="p-4">
+                      <h3 className="text-xl font-bold text-white mb-2">{pkg.title}</h3>
+                      <p className="text-gray-400 text-sm mb-3 line-clamp-2">{pkg.description}</p>
+                      <div className="text-amber-400 font-bold text-lg">₱{pkg.price.toLocaleString()}</div>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+
+              <div className="flex justify-center mt-8">
+                <Link href="/membership">
+                  <button className="bg-amber-400 hover:bg-amber-500 text-black font-bold py-3 px-8 rounded-lg transition-colors duration-300">
+                    View All
+                  </button>
+                </Link>
+              </div>
+            </>
+          )}
         </div>
       </section>
 
       {/* LOCATION SECTION WITH MAP */}
-      <section className="relative z-10 flex justify-center bg-[#1E1E1E] text-white py-16 px-6 sm:px-10 md:px-20 lg:px-40">
-        <div className="max-w-7xl w-full">
-          <h2 className="text-3xl sm:text-4xl font-bold mb-10 text-center">
-            FIND <span className="text-amber-300">OUR LOCATION</span>
-          </h2>
+    <section className="relative flex flex-col items-center justify-center text-white py-16 px-6 sm:px-10 md:px-20 lg:px-40">
+      {/* Background Image */}
+      <div className="absolute inset-0 -z-10">
+        <Image
+          src="/pic7.png"
+          alt="Location Background"
+          fill
+          className="object-cover object-center"
+          priority
+        />
+        <div className="absolute inset-0 bg-black/60" />
+      </div>
 
-          <Card className="w-full h-[500px] lg:h-[600px] overflow-hidden border-4 border-amber-500/20">
-            <GymMap className="w-full h-full" />
+      <div className="max-w-7xl w-full relative z-10">
+        <h2 className="text-3xl sm:text-4xl font-bold mb-10 text-center">
+          FIND <span className="text-amber-300">OUR LOCATION</span>
+        </h2>
+
+        {/* Map Card */}
+        <Card className="w-full h-[500px] lg:h-[600px] overflow-hidden border-4 border-amber-500/20 bg-black/30 backdrop-blur-sm">
+          <GymMap className="w-full h-full" />
+        </Card>
+
+        {/* Additional info below map */}
+        <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+          <Card className="p-6 bg-black/70 backdrop-blur-sm border-amber-500/30">
+            <div className="flex items-start gap-3">
+              <Icon icon="mdi:map-marker" className="text-amber-400 text-3xl flex-shrink-0" />
+              <div>
+                <h3 className="font-bold text-white text-lg mb-2">Address</h3>
+                <p className="text-sm text-gray-300">
+                  9015 @ Gen. Emilio Aguinaldo Highway<br />
+                  Arcontica Subdivision Salitran 2<br />
+                  Dasmariñas, Philippines
+                </p>
+              </div>
+            </div>
           </Card>
 
-          {/* Additional info below map */}
-          <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Card className="p-6 bg-amber-500/10 border-amber-500/20">
-              <div className="flex items-start gap-3">
-                <Icon icon="mdi:map-marker" className="text-amber-400 text-3xl flex-shrink-0" />
-                <div>
-                  <h3 className="font-bold  text-white text-lg mb-2">Address</h3>
-                  <p className="text-sm text-gray-300">
-                    9015 @ Gen. Emilio Aguinaldo Highway<br />
-                    Arcontica Subdivision Salitran 2<br />
-                    Dasmariñas, Philippines
-                  </p>
-                </div>
+          <Card className="p-6 bg-black/70 backdrop-blur-sm border-amber-500/30">
+            <div className="flex items-start gap-3">
+              <Icon icon="mdi:clock-outline" className="text-amber-400 text-3xl flex-shrink-0" />
+              <div>
+                <h3 className="font-bold text-white text-lg mb-2">Opening Hours</h3>
+                <p className="text-sm text-gray-300">
+                  Monday - Friday: 5:00 AM - 10:00 PM<br />
+                  Saturday - Sunday: 6:00 AM - 9:00 PM
+                </p>
               </div>
-            </Card>
+            </div>
+          </Card>
 
-            <Card className="p-6 bg-amber-500/10 border-amber-500/20">
-              <div className="flex items-start gap-3">
-                <Icon icon="mdi:clock-outline" className="text-amber-400 text-3xl flex-shrink-0" />
-                <div>
-                  <h3 className="font-bold text-white text-lg mb-2">Opening Hours</h3>
-                  <p className="text-sm text-gray-300">
-                    Monday - Friday: 5:00 AM - 10:00 PM<br />
-                    Saturday - Sunday: 6:00 AM - 9:00 PM
-                  </p>
-                </div>
+          <Card className="p-6 bg-black/70 backdrop-blur-sm border-amber-500/30">
+            <div className="flex items-start gap-3">
+              <Icon icon="mdi:phone" className="text-amber-400 text-3xl flex-shrink-0" />
+              <div>
+                <h3 className="font-bold text-white text-lg mb-2">Contact Us</h3>
+                <p className="text-sm text-gray-300">
+                  Phone: +63 976 044 3407<br />
+                  Email: endlessgrindfitnesscenter@gmail.com
+                </p>
               </div>
-            </Card>
-
-            <Card className="p-6 bg-amber-500/10 border-amber-500/20">
-              <div className="flex items-start gap-3">
-                <Icon icon="mdi:phone" className="text-amber-400 text-3xl flex-shrink-0" />
-                <div>
-                  <h3 className="font-bold text-white text-lg mb-2">Contact Us</h3>
-                  <p className="text-sm text-gray-300">
-                    Phone: +63 976 044 3407<br />
-                    Email: endlessgrindfitnesscenter@gmail.com
-                  </p>
-                </div>
-              </div>
-            </Card>
-          </div>
+            </div>
+          </Card>
         </div>
-      </section>
+      </div>
+    </section>
 
       <Footer />
     </div>

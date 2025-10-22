@@ -94,7 +94,7 @@ export default function Login() {
         </header>
       )}
 
-      <section className="relative flex flex-col items-center justify-center text-white h-[90vh]">
+      <section className="relative flex flex-col items-center justify-center text-white h-[90vh] px-5">
         <div className="absolute inset-0 -z-10">
           <Image src="/pic4.png" alt="Background" fill className="object-cover object-center" priority />
         </div>
@@ -108,7 +108,7 @@ export default function Login() {
             <div className="md:w-full md:gap-4">
               <Input
                 placeholder="Email"
-                className="h-16 bg-white text-black"
+                className="h-16  bg-white/20 mt-4 text-white placeholder:text-white"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 onKeyPress={handleKeyPress}
@@ -117,7 +117,7 @@ export default function Login() {
               <Input
                 placeholder="Password"
                 type="password"
-                className="h-16 bg-white mt-4 text-black"
+                className="h-16 bg-white/20 mt-4 text-white placeholder:text-white"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 onKeyPress={handleKeyPress}

@@ -34,7 +34,7 @@ export default function Contact(){
                 </header>
             )}
 
-            <section className="relative flex flex-col items-center justify-center text-white h-[90vh]">
+            <section className="relative flex flex-col items-center justify-center text-white h-[90vh] px-5">
                         {/* Background */}
                         <div className="absolute inset-0 -z-10">
                             <Image
@@ -47,7 +47,7 @@ export default function Contact(){
                         </div>
             
                         {/* Content on top of background */}
-                <Card className=" xl:py-10 xl:px-10 shadow-none border-none bg-[#1E1E1E]">
+                <Card className=" xl:py-10 xl:px-10 shadow-none border-none bg-[#1E1E1E]/70 px-5 ">
                     <Card className="flex justify-center bg-transparent items-center gap-10 border-none shadow-none ">
                         <div className="flex items-center gap-2" >
                             <Image
