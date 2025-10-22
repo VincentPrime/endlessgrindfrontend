@@ -3,14 +3,26 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import axios from "axios";
 
-interface User {
+// ✅ Define separate interfaces for different user types
+interface RegularUser {
   id: number;
   firstname: string;
   lastname: string;
   email: string;
-  role: "admin" | "coach" | "user";
+  role: "admin" | "user";
   image?: string;
 }
+
+interface CoachUser {
+  id: number;
+  coach_name: string;
+  email: string;
+  role: "coach";
+  profile_image?: string;
+}
+
+// ✅ Union type for User
+type User = RegularUser | CoachUser;
 
 interface UserContextType {
   user: User | null;
@@ -82,4 +94,13 @@ export const useUser = (): UserContextType => {
   const context = useContext(UserContext);
   if (!context) throw new Error("useUser must be used within a UserProvider");
   return context;
+};
+
+// ✅ Export type guard helpers
+export const isCoach = (user: User | null): user is CoachUser => {
+  return user !== null && user.role === "coach";
+};
+
+export const isRegularUser = (user: User | null): user is RegularUser => {
+  return user !== null && (user.role === "admin" || user.role === "user");
 };

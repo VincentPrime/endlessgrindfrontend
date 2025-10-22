@@ -48,7 +48,7 @@ export default function Membership(){
     
             <h1 className="text-center font-bold text-2xl py-10 px-5 xl:text-7xl xl:px-80 xl:py-20  text-white">
                 <span className="text-amber-400">Discover</span> our <span className="text-amber-400">Featured</span> and 
-                <span className="text-amber-400"> Fantastic Promos</span> you may want!
+                <span className="text-amber-400"> Fantastic Packages</span> you may want!
             </h1>
             </section>
 
@@ -59,19 +59,7 @@ export default function Membership(){
 
                 <div>
                     <h1 className="font-bold text-3xl xl:text-7xl xl:mt-20 w-full">
-                    Featured
-                    </h1>
-
-                    <div className="xl:mt-10 grid auto-rows-min gap-4 md:grid-cols-3">
-                        <div className="bg-muted/50 aspect-video rounded-xl" />
-                        <div className="bg-muted/50 aspect-video rounded-xl" />
-                        <div className="bg-muted/50 aspect-video rounded-xl" />
-                    </div>
-                </div>
-
-                <div>
-                    <h1 className="font-bold text-3xl xl:text-7xl xl:mt-20 w-full">
-                    Promos
+                    Packages
                     </h1>
 
                     <div className="xl:mt-10 grid auto-rows-min gap-4 md:grid-cols-3">

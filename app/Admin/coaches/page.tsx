@@ -34,19 +34,21 @@ export default function Coaches() {
 
   // ✅ Fetch all coaches
   const fetchCoaches = async () => {
-    setLoading(true)
-    try {
-      const res = await axios.get("http://localhost:4000/api/coaches/all", {
-        withCredentials: true,
-      })
-      setCoaches(res.data)
-    } catch (err: any) {
-      console.error("Error fetching coaches:", err)
-      alert(err.response?.data?.message || "Failed to fetch coaches")
-    } finally {
-      setLoading(false)
-    }
+  setLoading(true)
+  try {
+    const res = await axios.get("http://localhost:4000/api/coaches/all", {
+      withCredentials: true,
+    })
+
+    // 🧩 FIX: make sure you use the actual array
+    setCoaches(res.data.coaches || [])
+  } catch (err: any) {
+    console.error("Error fetching coaches:", err)
+    alert(err.response?.data?.message || "Failed to fetch coaches")
+  } finally {
+    setLoading(false)
   }
+}
 
   // ✅ Delete coach
   const handleDelete = async (id: number) => {

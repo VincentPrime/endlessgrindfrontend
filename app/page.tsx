@@ -6,6 +6,18 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { Icon } from "@iconify-icon/react";
 import Footer from "@/components/Footer/footer";
 import { Card } from "@/components/ui/card";
+import dynamic from 'next/dynamic';
+
+// Dynamically import the map component (client-side only)
+const GymMap = dynamic(() => import('@/components/gymmap/GymMap'), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-full flex items-center justify-center bg-gray-100 rounded-lg">
+      <p className="text-gray-500">Loading map...</p>
+    </div>
+  ),
+});
+
 export default function Home() {
   const isMobile = useIsMobile();
 
@@ -37,17 +49,17 @@ export default function Home() {
       {/* HERO SECTION */}
       <section className="relative flex flex-col items-center justify-center text-white h-[80vh] sm:h-[90vh] px-4 text-center">
         <div className="absolute inset-0 -z-10">
-                  <Image
-                    src="/pic1.png"
-                    alt="Background"
-                    fill
-                    className="object-cover object-center"
-                    priority
-                    />
+          <Image
+            src="/pic1.png"
+            alt="Background"
+            fill
+            className="object-cover object-center"
+            priority
+          />
           <div className="absolute inset-0 bg-black/60" /> 
         </div>
         <h1 className="font-bold text-3xl xl:text-7xl w-full">
-          <span className="text-amber-400">GRIND FIT</span>: LET’S GRIND YOUR BODY
+          <span className="text-amber-400">GRIND FIT</span>: LET'S GRIND YOUR BODY
         </h1>
       </section>
 
@@ -59,8 +71,7 @@ export default function Home() {
           </h2>
 
           <div className="flex flex-col md:flex-row items-center gap-10">
-        
-            <div className="relative w-full md:w-1/2 h-[350px]  md:h-[400px] rounded-lg overflow-hidden">
+            <div className="relative w-full md:w-1/2 h-[350px] md:h-[400px] rounded-lg overflow-hidden">
               <Image
                 src="/pic2.png"
                 alt="Fitness"
@@ -97,11 +108,11 @@ export default function Home() {
           Your <span className="text-amber-400">body</span> can do it
         </h1>
         <h1 className="font-bold text-3xl sm:text-4xl md:text-5xl leading-snug">
-          It’s time to convince your <span className="text-amber-400">mind.</span>
+          It's time to convince your <span className="text-amber-400">mind.</span>
         </h1>
       </section>
 
-      {/* OUR MEMBESHIP */}
+      {/* OUR MEMBERSHIP */}
       <section className="relative z-10 flex justify-center bg-[#1E1E1E] text-white py-16 px-6 sm:px-10 md:px-20 lg:px-40">
         <div className="max-w-7xl w-full">
           <h2 className="text-3xl sm:text-4xl font-bold mb-10">
@@ -113,31 +124,66 @@ export default function Home() {
             <div className="bg-muted/50 aspect-video rounded-xl" />
             <div className="bg-muted/50 aspect-video rounded-xl" />
           </div>
-
         </div>
       </section>
 
-      {/* LOCATION */}
-      <section className="relative flex flex-col xl:px-80 items-center justify-center text-white h-[80vh] sm:h-[90vh] px-4 text-center">
-        <div className="absolute inset-0 -z-10">
-          <Image
-            src="/pic7.png"
-            alt="Background"
-            fill
-            className="object-cover object-center"
-            priority
-          />
-            <div className="absolute inset-0 bg-black/60" /> 
-        </div>
-        <h1 className="font-bold text-3xl xl:text-7xl w-full">
-          <Card>
-            
+      {/* LOCATION SECTION WITH MAP */}
+      <section className="relative z-10 flex justify-center bg-[#1E1E1E] text-white py-16 px-6 sm:px-10 md:px-20 lg:px-40">
+        <div className="max-w-7xl w-full">
+          <h2 className="text-3xl sm:text-4xl font-bold mb-10 text-center">
+            FIND <span className="text-amber-300">OUR LOCATION</span>
+          </h2>
+
+          <Card className="w-full h-[500px] lg:h-[600px] overflow-hidden border-4 border-amber-500/20">
+            <GymMap className="w-full h-full" />
           </Card>
-        </h1>
+
+          {/* Additional info below map */}
+          <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+            <Card className="p-6 bg-amber-500/10 border-amber-500/20">
+              <div className="flex items-start gap-3">
+                <Icon icon="mdi:map-marker" className="text-amber-400 text-3xl flex-shrink-0" />
+                <div>
+                  <h3 className="font-bold  text-white text-lg mb-2">Address</h3>
+                  <p className="text-sm text-gray-300">
+                    9015 @ Gen. Emilio Aguinaldo Highway<br />
+                    Arcontica Subdivision Salitran 2<br />
+                    Dasmariñas, Philippines
+                  </p>
+                </div>
+              </div>
+            </Card>
+
+            <Card className="p-6 bg-amber-500/10 border-amber-500/20">
+              <div className="flex items-start gap-3">
+                <Icon icon="mdi:clock-outline" className="text-amber-400 text-3xl flex-shrink-0" />
+                <div>
+                  <h3 className="font-bold text-white text-lg mb-2">Opening Hours</h3>
+                  <p className="text-sm text-gray-300">
+                    Monday - Friday: 5:00 AM - 10:00 PM<br />
+                    Saturday - Sunday: 6:00 AM - 9:00 PM
+                  </p>
+                </div>
+              </div>
+            </Card>
+
+            <Card className="p-6 bg-amber-500/10 border-amber-500/20">
+              <div className="flex items-start gap-3">
+                <Icon icon="mdi:phone" className="text-amber-400 text-3xl flex-shrink-0" />
+                <div>
+                  <h3 className="font-bold text-white text-lg mb-2">Contact Us</h3>
+                  <p className="text-sm text-gray-300">
+                    Phone: +63 976 044 3407<br />
+                    Email: endlessgrindfitnesscenter@gmail.com
+                  </p>
+                </div>
+              </div>
+            </Card>
+          </div>
+        </div>
       </section>
 
-
-      <Footer/>
+      <Footer />
     </div>
   );
 }

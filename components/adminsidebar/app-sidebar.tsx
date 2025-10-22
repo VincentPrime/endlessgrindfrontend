@@ -33,7 +33,7 @@ export function AppSidebar() {
     { href: "/Admin/users", label: "LIST OF USERS", icon: "material-symbols:person-rounded" },
     { href: "/Admin/schedule", label: "SCHEDULE", icon: "uis:schedule" },
     { href: "/Admin/package", label: "PROMOS/PACKAGE", icon: "mdi:package" },
-    { href: "/Admin/application", label: "APPLICATION NOTICE", icon: "ri:megaphone-fill" },
+    { href: "/Admin/applicationnotice", label: "APPLICATION NOTICE", icon: "ri:megaphone-fill" },
   ]
   const handleLogout = async () => {
     try {

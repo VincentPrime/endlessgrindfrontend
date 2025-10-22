@@ -12,18 +12,11 @@ import axios from "axios";
 import { useState } from "react";
 import { Card } from "../ui/card";
 import { Input } from "../ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { uploadCoachImage } from "@/lib/supabase"; // Adjust path as needed
+import Image from "next/image";
 
 export function AddCoaches() {
   const [formData, setFormData] = useState({
-    user_id: "", // Add this field
     coach_name: "",
     email: "",
     password: "",
@@ -32,15 +25,33 @@ export function AddCoaches() {
     specialty: "",
     certifications: "",
     years_of_experience: "",
-    availability: "",
+    availability_day: "",
+    availability_start: "",
+    availability_end: "",
     performance_rating: "",
   });
 
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string>("");
   const [loading, setLoading] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setImageFile(file);
+      // Create preview
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleSignup = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -48,18 +59,31 @@ export function AddCoaches() {
     setLoading(true);
 
     try {
-      // Format the data to match backend expectations
+      let imageUrl = formData.profile_image;
+
+      // Upload image to Supabase if file is selected
+      if (imageFile) {
+        setUploadingImage(true);
+        imageUrl = await uploadCoachImage(imageFile);
+        setUploadingImage(false);
+      }
+
+      // Format availability as simple text
+      const availabilityText = formData.availability_day && formData.availability_start && formData.availability_end
+        ? `${formData.availability_day} ${formData.availability_start} to ${formData.availability_end}`
+        : null;
+
       const payload = {
-        user_id: parseInt(formData.user_id), // Convert to number
         coach_name: formData.coach_name,
         email: formData.email,
         password: formData.password,
         bio: formData.bio || null,
-        profile_image: formData.profile_image || null,
+        profile_image: imageUrl || null,
         specialty: formData.specialty || null,
         certifications: formData.certifications || null,
         years_of_experience: parseInt(formData.years_of_experience) || 0,
-        availability: formData.availability ? JSON.parse(formData.availability) : null,
+        availability: availabilityText,
+        performance_rating: parseFloat(formData.performance_rating) || 0.0,
       };
 
       const res = await axios.post("http://localhost:4000/api/coaches/signup", payload, {
@@ -70,7 +94,6 @@ export function AddCoaches() {
 
       // Reset form
       setFormData({
-        user_id: "",
         coach_name: "",
         email: "",
         password: "",
@@ -79,17 +102,22 @@ export function AddCoaches() {
         specialty: "",
         certifications: "",
         years_of_experience: "",
-        availability: "",
+        availability_day: "",
+        availability_start: "",
+        availability_end: "",
         performance_rating: "",
       });
+      setImageFile(null);
+      setImagePreview("");
 
-      setIsOpen(false); // Close dialog
-      window.location.reload(); // Refresh to show new coach
+      setIsOpen(false);
+      window.location.reload();
     } catch (err: any) {
       console.error(err);
       alert(err.response?.data?.message || "Failed to add coach.");
     } finally {
       setLoading(false);
+      setUploadingImage(false);
     }
   };
 
@@ -99,7 +127,7 @@ export function AddCoaches() {
         <Button variant="outline">Add Coach</Button>
       </DialogTrigger>
 
-      <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-auto">
         <DialogHeader>
           <DialogTitle>Add Coach</DialogTitle>
         </DialogHeader>
@@ -107,17 +135,6 @@ export function AddCoaches() {
         <form onSubmit={handleSignup}>
           <Card className="flex flex-col items-center gap-4 bg-transparent border-none shadow-none">
             
-            {/* USER ID (required by backend) */}
-            <Input
-              name="user_id"
-              type="number"
-              placeholder="User ID (unique)"
-              className="h-12 bg-white"
-              value={formData.user_id}
-              onChange={handleChange}
-              required
-            />
-
             {/* COACH NAME */}
             <Input
               name="coach_name"
@@ -150,6 +167,27 @@ export function AddCoaches() {
               required
             />
 
+            {/* PROFILE IMAGE UPLOAD */}
+            <div className="w-full">
+              <label className="block text-sm font-medium mb-2">Profile Image</label>
+              <Input
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                className="h-12 bg-white"
+              />
+              {imagePreview && (
+                <div className="mt-2 relative w-32 h-32">
+                  <Image
+                    src={imagePreview}
+                    alt="Preview"
+                    fill
+                    className="object-cover rounded-lg"
+                  />
+                </div>
+              )}
+            </div>
+
             {/* SPECIALTY */}
             <Input
               name="specialty"
@@ -178,23 +216,48 @@ export function AddCoaches() {
               onChange={handleChange}
             />
 
-            {/* AVAILABILITY (JSON format helper) */}
+            {/* PERFORMANCE RATING */}
             <Input
-              name="availability"
-              placeholder='Availability (e.g. {"Monday":["9:00-12:00"]})'
+              name="performance_rating"
+              type="number"
+              step="0.1"
+              min="0"
+              max="5"
+              placeholder="Performance Rating (0.0 - 5.0)"
               className="h-12 bg-white"
-              value={formData.availability}
+              value={formData.performance_rating}
               onChange={handleChange}
             />
 
-            {/* PROFILE IMAGE */}
-            <Input
-              name="profile_image"
-              placeholder="Profile Image URL"
-              className="h-12 bg-white"
-              value={formData.profile_image}
-              onChange={handleChange}
-            />
+            {/* AVAILABILITY - Simplified */}
+            <div className="w-full space-y-2">
+              <label className="block text-sm font-medium">Availability</label>
+              <Input
+                name="availability_day"
+                placeholder="Day (e.g. Monday, Tuesday)"
+                className="h-12 bg-white"
+                value={formData.availability_day}
+                onChange={handleChange}
+              />
+              <div className="grid grid-cols-2 gap-2">
+                <Input
+                  name="availability_start"
+                  type="time"
+                  placeholder="Start Time"
+                  className="h-12 bg-white"
+                  value={formData.availability_start}
+                  onChange={handleChange}
+                />
+                <Input
+                  name="availability_end"
+                  type="time"
+                  placeholder="End Time"
+                  className="h-12 bg-white"
+                  value={formData.availability_end}
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
 
             {/* BIO */}
             <textarea
@@ -209,9 +272,9 @@ export function AddCoaches() {
             <Button
               type="submit"
               className="w-full bg-blue-600 hover:bg-blue-700 h-12"
-              disabled={loading}
+              disabled={loading || uploadingImage}
             >
-              {loading ? "Creating Coach..." : "Add Coach"}
+              {uploadingImage ? "Uploading Image..." : loading ? "Creating Coach..." : "Add Coach"}
             </Button>
           </Card>
         </form>

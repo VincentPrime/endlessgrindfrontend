@@ -12,22 +12,22 @@ import { Separator } from "../ui/separator";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useUser, isRegularUser } from "@/context/AuthContext";
+import { useUser } from "@/context/AuthContext";
 import axios from "axios";
 
-export function UserSidebar() {
+export function CoachSidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const { user, logout } = useUser();
 
+  // ✅ Don't show sidebar if user is not logged in
   if (!user) return null;
 
   const navItems = [
-    { href: "/Users/dashboard", label: "DASHBOARD", icon: "material-symbols-light:dashboard-rounded" },
-    { href: "/Users/stats", label: "PERSONAL STATS", icon: "nimbus:stats" },
-    { href: "/Users/schedule", label: "MY SCHEDULE", icon: "uis:schedule" },
-    { href: "/Users/attendance", label: "ATTENDANCE", icon: "material-symbols:person-check-rounded" },
-    { href: "/Users/application", label: "APPLICATION", icon: "lucide:vote"},
+    { href: "/Coach/dashboard", label: "DASHBOARD", icon: "material-symbols-light:dashboard-rounded" },
+    { href: "/Coach/clients", label: "CLIENTS", icon: "nimbus:stats" },
+    { href: "/Coach/schedule", label: "MY SCHEDULE", icon: "uis:schedule" },
+    { href: "/Coach/attendance", label: "ATTENDANCE", icon: "material-symbols:person-check-rounded" },
   ];
 
   const handleLogout = async () => {
@@ -46,16 +46,50 @@ export function UserSidebar() {
     }
   };
 
-  // ✅ Use type guard to safely access properties
-  const displayName = isRegularUser(user) 
-    ? `${user.firstname} ${user.lastname}`.trim() 
-    : "User";
+  // ✅ Type guard to check if user is a coach
+  const isCoach = (user: any): user is { coach_name: string; profile_image?: string; role: string } => {
+    return 'coach_name' in user;
+  };
+
+  // ✅ Get display name based on user type
+  const displayName = isCoach(user) 
+    ? user.coach_name 
+    : `${(user as any).firstname || ''} ${(user as any).lastname || ''}`.trim() || "User";
   
-  const displayRole = user.role.toUpperCase();
+  const displayRole = user.role?.toUpperCase() || "USER";
   
-  const profileImage = isRegularUser(user) 
-    ? (user.image || "/user.png") 
-    : "/user.png";
+  // ✅ Ensure we always have a valid image path
+const getProfileImage = () => {
+  let imageUrl = "/user.png"; // default
+
+  if (isCoach(user)) {
+    imageUrl = user.profile_image ?? "/user.png";
+  } else {
+    imageUrl = (user as any).image ?? "/user.png";
+  }
+
+  // ✅ Always sanitize before returning
+  if (
+    !imageUrl ||
+    imageUrl.trim() === "" ||
+    imageUrl === "null" ||
+    imageUrl === "undefined"
+  ) {
+    return "/user.png";
+  }
+
+  // ✅ If Supabase or HTTP image, return as is
+  if (imageUrl.startsWith("http")) return imageUrl;
+
+  // ✅ If it’s a relative path (like stored file), prefix properly
+  if (imageUrl.startsWith("/")) return imageUrl;
+
+  // ✅ Default fallback
+  return `/user.png`;
+};
+
+  
+  const profileImage = getProfileImage();
 
   return (
     <Sidebar className="py-4 pl-6">
