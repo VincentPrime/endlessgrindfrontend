@@ -4,7 +4,7 @@ import { AppSidebar } from "@/components/adminsidebar/app-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { useIsMobile } from "@/hooks/use-mobile";
 import Image from "next/image";
-
+import Swal from 'sweetalert2';
 interface Application {
   application_id: number;
   user_id: number;
@@ -65,89 +65,168 @@ export default function ApplicationNotice() {
   };
 
   const handleApprove = async (applicationId: number) => {
-    if (!confirm('Are you sure you want to approve this application?')) return;
+    const result = await Swal.fire({
+      title: "Approve Application?",
+      text: "Are you sure you want to approve this application?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, approve it!",
+    });
+
+    if (!result.isConfirmed) return;
 
     setActionLoading(true);
     try {
       const response = await fetch(`http://localhost:4000/api/applications/${applicationId}/approve`, {
-        method: 'PUT',
-        credentials: 'include'
+        method: "PUT",
+        credentials: "include",
       });
-      
+
       const data = await response.json();
-      
+
       if (data.success) {
-        alert('Application approved successfully!');
+        await Swal.fire({
+          title: "Approved!",
+          text: "The application has been approved successfully.",
+          icon: "success",
+          timer: 2000,
+          showConfirmButton: false,
+        });
+
         fetchApplications();
         setSelectedApp(null);
       } else {
-        alert(data.message || 'Failed to approve application');
+        Swal.fire({
+          title: "Error",
+          text: data.message || "Failed to approve application.",
+          icon: "error",
+        });
       }
     } catch (error) {
-      console.error('Error approving application:', error);
-      alert('Failed to approve application');
+      console.error("Error approving application:", error);
+
+      Swal.fire({
+        title: "Error!",
+        text: "An unexpected error occurred.",
+        icon: "error",
+      });
     } finally {
       setActionLoading(false);
     }
   };
 
-  const handleDecline = async (applicationId: number) => {
-    if (!confirm('Are you sure you want to decline this application? Payment will be refunded if completed.')) return;
+ const handleDecline = async (applicationId: number) => {
+  const result = await Swal.fire({
+    title: "Decline Application?",
+    text: "Are you sure you want to decline this application? Payment will be refunded if completed.",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#d33",
+    cancelButtonColor: "#3085d6",
+    confirmButtonText: "Yes, decline it!",
+  });
 
-    setActionLoading(true);
-    try {
-      const response = await fetch(`http://localhost:4000/api/applications/${applicationId}/decline`, {
-        method: 'PUT',
-        credentials: 'include'
+  if (!result.isConfirmed) return;
+
+  setActionLoading(true);
+  try {
+    const response = await fetch(`http://localhost:4000/api/applications/${applicationId}/decline`, {
+      method: "PUT",
+      credentials: "include",
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      await Swal.fire({
+        title: "Declined!",
+        text: data.refund_initiated
+          ? "Application declined and refund has been initiated."
+          : "Application declined successfully.",
+        icon: "success",
+        timer: 2000,
+        showConfirmButton: false,
       });
-      
-      const data = await response.json();
-      
-      if (data.success) {
-        alert(data.refund_initiated 
-          ? 'Application declined and refund initiated!' 
-          : 'Application declined successfully!');
-        fetchApplications();
-        setSelectedApp(null);
-      } else {
-        alert(data.message || 'Failed to decline application');
-      }
-    } catch (error) {
-      console.error('Error declining application:', error);
-      alert('Failed to decline application');
-    } finally {
-      setActionLoading(false);
-    }
-  };
 
-  const handleCancel = async (applicationId: number) => {
-    if (!confirm('Are you sure you want to PERMANENTLY DELETE this application? This action cannot be undone. Payment will be refunded if completed.')) return;
-
-    setActionLoading(true);
-    try {
-      const response = await fetch(`http://localhost:4000/api/applications/${applicationId}/cancel`, {
-        method: 'DELETE',
-        credentials: 'include'
+      fetchApplications();
+      setSelectedApp(null);
+    } else {
+      Swal.fire({
+        title: "Error!",
+        text: data.message || "Failed to decline application.",
+        icon: "error",
       });
-      
-      const data = await response.json();
-      
-      if (data.success) {
-        alert(data.refund_initiated 
-          ? 'Application cancelled and refund initiated!' 
-          : 'Application cancelled successfully!');
-        fetchApplications();
-        setSelectedApp(null);
-      } else {
-        alert(data.message || 'Failed to cancel application');
-      }
-    } catch (error) {
-      console.error('Error cancelling application:', error);
-      alert('Failed to cancel application');
-    } finally {
-      setActionLoading(false);
     }
-  };
+  } catch (error) {
+    console.error("Error declining application:", error);
+
+    Swal.fire({
+      title: "Error!",
+      text: "An unexpected error occurred while declining the application.",
+      icon: "error",
+    });
+  } finally {
+    setActionLoading(false);
+  }
+};
+
+
+const handleCancel = async (applicationId: number) => {
+  const result = await Swal.fire({
+    title: "Permanently Delete Application?",
+    text: "Are you sure you want to PERMANENTLY DELETE this application? This action cannot be undone. Payment will be refunded if completed.",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#d33",
+    cancelButtonColor: "#3085d6",
+    confirmButtonText: "Yes, delete it permanently!",
+  });
+
+  if (!result.isConfirmed) return;
+
+  setActionLoading(true);
+  try {
+    const response = await fetch(`http://localhost:4000/api/applications/${applicationId}/cancel`, {
+      method: "DELETE",
+      credentials: "include",
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      await Swal.fire({
+        title: "Deleted!",
+        text: data.refund_initiated
+          ? "Application deleted and refund has been initiated."
+          : "Application deleted successfully.",
+        icon: "success",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+
+      fetchApplications();
+      setSelectedApp(null);
+    } else {
+      Swal.fire({
+        title: "Error!",
+        text: data.message || "Failed to delete application.",
+        icon: "error",
+      });
+    }
+  } catch (error) {
+    console.error("Error cancelling application:", error);
+
+    Swal.fire({
+      title: "Error!",
+      text: "An unexpected error occurred while deleting the application.",
+      icon: "error",
+    });
+  } finally {
+    setActionLoading(false);
+  }
+};
 
   const filteredApplications = applications.filter(app => {
     if (filter === 'all') return true;
@@ -353,7 +432,7 @@ export default function ApplicationNotice() {
 
         {/* Detail Modal */}
         {selectedApp && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="fixed inset-0 bg-black/70 bg-opacity-50 flex items-center justify-center z-50 p-4">
             <div className="bg-white rounded-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto p-6">
               <div className="flex justify-between items-start mb-6">
                 <h2 className="text-2xl font-bold">Application Details</h2>

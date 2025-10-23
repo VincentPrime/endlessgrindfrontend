@@ -51,9 +51,9 @@ export default function Login() {
       if (user.role === "admin") {
         router.push("/Admin/dashboard")
       } else if (user.role === "coach") {
-        router.push("/Coach/dashboard")
+        router.push("/Coach/clients")
       } else {
-        router.push("/Users/dashboard")
+        router.push("/Users/schedule")
       }
     } catch (err: any) {
       console.error("Login error:", err)
@@ -108,7 +108,7 @@ export default function Login() {
             <div className="md:w-full md:gap-4">
               <Input
                 placeholder="Email"
-                className="h-16  bg-white/20 mt-4 text-white placeholder:text-white"
+                className="h-16 bg-white/20 mt-4 text-white placeholder:text-white"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 onKeyPress={handleKeyPress}

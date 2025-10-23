@@ -11,6 +11,7 @@ import Footer from "@/components/Footer/footer";
 import { Separator } from "@radix-ui/react-separator";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Icon } from "@iconify-icon/react";
+import Swal from "sweetalert2";
 
 export default function Signup() {
   const isMobile = useIsMobile();
@@ -50,7 +51,12 @@ export default function Signup() {
         withCredentials: true,
       });
 
-      alert(res.data.message || "Signup successful!");
+      Swal.fire({
+        text: "Sign up successfully.",
+        icon: "success",
+        timer: 2000,
+        showConfirmButton: false,
+      });
       setFormData({
         firstname: "",
         middlename: "",

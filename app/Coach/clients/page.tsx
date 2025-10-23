@@ -4,6 +4,7 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { useIsMobile } from "@/hooks/use-mobile";
 import Image from "next/image";
 import { CoachSidebar } from '@/components/coachsidebar/coach-sidebar';
+import Swal from 'sweetalert2';
 
 interface Client {
   application_id: number;
@@ -102,35 +103,54 @@ export default function CoachClients() {
     }
   };
 
-  const handleCompleteProgram = async (applicationId: number, clientName: string) => {
-    const confirm = window.confirm(
-      `Are you sure you want to mark ${clientName}'s training program as COMPLETED? This cannot be undone.`
-    );
+const handleCompleteProgram = async (applicationId: number, clientName: string) => {
+  const result = await Swal.fire({
+    title: "Mark Program as Completed?",
+    text: `Are you sure you want to mark ${clientName}'s training program as COMPLETED? This action cannot be undone.`,
+    icon: "question",
+    showCancelButton: true,
+    confirmButtonColor: "#28a745", // green for "complete"
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes, mark as completed!",
+  });
 
-    if (!confirm) return;
+  if (!result.isConfirmed) return;
 
-    try {
-      const response = await fetch(
-        `http://localhost:4000/api/training/complete/${applicationId}`,
-        {
-          method: 'PUT',
-          credentials: 'include'
-        }
-      );
+  try {
+    const response = await fetch(`http://localhost:4000/api/training/complete/${applicationId}`, {
+      method: "PUT",
+      credentials: "include",
+    });
 
-      const data = await response.json();
+    const data = await response.json();
 
-      if (data.success) {
-        alert('Training program marked as completed! 🎉');
-        fetchClients();
-      } else {
-        alert(data.message || 'Failed to complete program');
-      }
-    } catch (err) {
-      console.error('Error completing program:', err);
-      alert('Failed to complete program');
+    if (data.success) {
+      await Swal.fire({
+        title: "Completed!",
+        text: "Training program marked as completed successfully 🎉",
+        icon: "success",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+
+      fetchClients();
+    } else {
+      Swal.fire({
+        title: "Error!",
+        text: data.message || "Failed to complete program.",
+        icon: "error",
+      });
     }
-  };
+  } catch (err) {
+    console.error("Error completing program:", err);
+
+    Swal.fire({
+      title: "Error!",
+      text: "An unexpected error occurred while completing the program.",
+      icon: "error",
+    });
+  }
+};
 
   const getStatusBadge = (status: string) => {
     const badges: Record<string, string> = {
@@ -240,7 +260,7 @@ export default function CoachClients() {
                               onClick={() => handleLogSession(client)}
                               className="px-6 py-2 bg-blue-500 text-white font-medium rounded-md hover:bg-blue-600 transition-colors"
                             >
-                              Login
+                              Logs
                             </button>
                             <button
                               onClick={() => handleCompleteProgram(client.application_id, client.user_name)}

@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "../ui/card";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
+import Swal from "sweetalert2";
 
 interface AddPackageProps {
   onPackageAdded?: () => void;
@@ -80,7 +81,12 @@ export function AddPackage({ onPackageAdded }: AddPackageProps) {
       });
 
       if (res.status === 201) {
-        alert("✅ Package added successfully!");
+        await Swal.fire({
+            text: "Package Added successfully.",
+            icon: "success",
+            timer: 2000,
+            showConfirmButton: false,
+          });
         setForm({
           title: "",
           description: "",

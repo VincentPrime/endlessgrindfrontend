@@ -10,6 +10,7 @@ import Image from "next/image";
 import { AddPackage } from "@/components/adminsModal/addpromo";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 interface Package {
   package_id: number;
@@ -41,15 +42,39 @@ export default function PackagePage() {
   }, []);
 
   const handleDelete = async (id: number) => {
-    if (!confirm("Are you sure you want to delete this package?")) return;
+    const result = await Swal.fire({
+      title: "Are you sure you want to delete this package?",
+      text: "This action cannot be undone.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    });
 
-    try {
-      await axios.delete(`http://localhost:4000/api/deletepack/${id}`);
-      setPackages((prev) => prev.filter((pkg) => pkg.package_id !== id));
-      alert("✅ Package deleted successfully!");
-    } catch (err) {
-      console.error("Error deleting package:", err);
-      alert("❌ Failed to delete package.");
+    if (result.isConfirmed) {
+      try {
+        await axios.delete(`http://localhost:4000/api/deletepack/${id}`);
+
+        // Update UI
+        setPackages((prev) => prev.filter((pkg) => pkg.package_id !== id));
+
+        await Swal.fire({
+          title: "Deleted!",
+          text: "Package deleted successfully.",
+          icon: "success",
+          timer: 2000,
+          showConfirmButton: false,
+        });
+      } catch (err) {
+        console.error("Error deleting package:", err);
+
+        Swal.fire({
+          title: "Error!",
+          text: "Failed to delete package.",
+          icon: "error",
+        });
+      }
     }
   };
 

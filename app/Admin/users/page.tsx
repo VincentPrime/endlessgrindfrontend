@@ -11,6 +11,7 @@ import { useIsMobile } from "@/hooks/use-mobile"
 import Image from "next/image"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import Swal from "sweetalert2"
 
 interface User {
   user_id: number;
@@ -49,18 +50,43 @@ export default function Users() {
 
   // ✅ Delete user
   const handleDelete = async (id: number) => {
-    if (!confirm("Are you sure you want to delete this user?")) return
-    try {
-      await axios.delete(`http://localhost:4000/api/auth/delete/${id}`, {
-        withCredentials: true,
-      })
-      alert("User deleted successfully!")
-      fetchAllUsers() // Refresh list
-    } catch (err: any) {
-      console.error("Error deleting user:", err)
-      alert(err.response?.data?.message || "Failed to delete user.")
+    const result = await Swal.fire({
+      title: "Are you sure you want to delete this user?",
+      text: "This action cannot be undone.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await axios.delete(`http://localhost:4000/api/auth/delete/${id}`, {
+          withCredentials: true,
+        });
+
+        await Swal.fire({
+          title: "Deleted!",
+          text: "User deleted successfully.",
+          icon: "success",
+          timer: 2000,
+          showConfirmButton: false,
+        });
+
+        // Refresh user list
+        fetchAllUsers();
+      } catch (err: any) {
+        console.error("Error deleting user:", err);
+
+        Swal.fire({
+          title: "Error!",
+          text: err.response?.data?.message || "Failed to delete user.",
+          icon: "error",
+        });
+      }
     }
-  }
+  };
 
   useEffect(() => {
     fetchAllUsers()

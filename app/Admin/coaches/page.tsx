@@ -12,6 +12,7 @@ import Image from "next/image"
 import { AddCoaches } from "@/components/adminsModal/addcoach"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import Swal from "sweetalert2";
 
 interface Coach {
   coach_id: number;
@@ -51,19 +52,44 @@ export default function Coaches() {
 }
 
   // ✅ Delete coach
-  const handleDelete = async (id: number) => {
-    if (!confirm("Are you sure you want to delete this coach?")) return
+const handleDelete = async (id: number) => {
+  const result = await Swal.fire({
+    title: "Are you sure you want to delete this coach?",
+    text: "This action cannot be undone.",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes, delete it!",
+  });
+
+  if (result.isConfirmed) {
     try {
       await axios.delete(`http://localhost:4000/api/coaches/delete/${id}`, {
         withCredentials: true,
-      })
-      alert("Coach deleted successfully!")
-      fetchCoaches() // Refresh list
+      });
+
+      await Swal.fire({
+        title: "Deleted!",
+        text: "Coach deleted successfully.",
+        icon: "success",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+
+      // Refresh the list
+      fetchCoaches();
     } catch (err: any) {
-      console.error("Error deleting coach:", err)
-      alert(err.response?.data?.message || "Failed to delete coach.")
+      console.error("Error deleting coach:", err);
+
+      Swal.fire({
+        title: "Error!",
+        text:  "This coach currently has an active client and cannot be deleted until all sessions are completed.",
+        icon: "error",
+      });
     }
   }
+};
 
   useEffect(() => {
     fetchCoaches()

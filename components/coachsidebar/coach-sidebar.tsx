@@ -24,10 +24,10 @@ export function CoachSidebar() {
   if (!user) return null;
 
   const navItems = [
-    { href: "/Coach/dashboard", label: "DASHBOARD", icon: "material-symbols-light:dashboard-rounded" },
+
     { href: "/Coach/clients", label: "CLIENTS", icon: "nimbus:stats" },
-    { href: "/Coach/schedule", label: "MY SCHEDULE", icon: "uis:schedule" },
-    { href: "/Coach/attendance", label: "ATTENDANCE", icon: "material-symbols:person-check-rounded" },
+    { href: "/Coach/settings", label: "SETTINGS", icon: "mdi:gear" },
+  
   ];
 
   const handleLogout = async () => {

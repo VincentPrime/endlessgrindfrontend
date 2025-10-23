@@ -23,11 +23,9 @@ export function UserSidebar() {
   if (!user) return null;
 
   const navItems = [
-    { href: "/Users/dashboard", label: "DASHBOARD", icon: "material-symbols-light:dashboard-rounded" },
-    { href: "/Users/stats", label: "PERSONAL STATS", icon: "nimbus:stats" },
     { href: "/Users/schedule", label: "MY SCHEDULE", icon: "uis:schedule" },
-    { href: "/Users/attendance", label: "ATTENDANCE", icon: "material-symbols:person-check-rounded" },
     { href: "/Users/application", label: "APPLICATION", icon: "lucide:vote"},
+    { href: "/Users/settings", label: "SETTINGS", icon: "mdi:gear"},
   ];
 
   const handleLogout = async () => {

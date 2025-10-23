@@ -14,6 +14,7 @@ import { Card } from "../ui/card";
 import { Input } from "../ui/input";
 import { uploadCoachImage } from "@/lib/supabase"; // Adjust path as needed
 import Image from "next/image";
+import Swal from "sweetalert2";
 
 export function AddCoaches() {
   const [formData, setFormData] = useState({
@@ -90,7 +91,12 @@ export function AddCoaches() {
         withCredentials: true,
       });
 
-      alert(res.data.message || "Coach added successfully!");
+      await Swal.fire({
+        text: "Coach Added successfully.",
+        icon: "success",
+        timer: 2000,
+        showConfirmButton: false,
+      });
 
       // Reset form
       setFormData({
