@@ -1,20 +1,26 @@
 "use client";
-
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import axios from "axios";
 
-// ✅ Define separate interfaces for different user types
+// ✅ Updated RegularUser interface with all fields
 interface RegularUser {
-  id: number;
+  user_id: number;
   firstname: string;
+  middlename?: string | null;  // ✅ Added
   lastname: string;
+  sex?: string;
+  civil_status?: string;
+  date_of_birth?: string;
+  weight?: number | null;
+  height?: number | null;
+  address?: string | null;  // ✅ Added
   email: string;
   role: "admin" | "user";
   image?: string;
 }
 
 interface CoachUser {
-  id: number;
+  user_id: number;  // Changed from 'id' to match backend
   coach_name: string;
   email: string;
   role: "coach";
@@ -44,7 +50,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         const response = await axios.get("http://localhost:4000/api/auth/session", {
           withCredentials: true,
         });
-
         if (response.data.loggedIn) {
           setUser(response.data.user);
           localStorage.setItem("user", JSON.stringify(response.data.user));
@@ -61,7 +66,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         setIsLoading(false);
       }
     };
-
     checkSession();
   }, []);
 

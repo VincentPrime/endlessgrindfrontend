@@ -26,7 +26,7 @@ export function CoachSidebar() {
   const navItems = [
 
     { href: "/Coach/clients", label: "CLIENTS", icon: "nimbus:stats" },
-    { href: "/Coach/settings", label: "SETTINGS", icon: "mdi:gear" },
+    { href: "/Coach/Coachsettings", label: "SETTINGS", icon: "mdi:gear" },
   
   ];
 

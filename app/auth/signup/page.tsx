@@ -12,6 +12,7 @@ import { Separator } from "@radix-ui/react-separator";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Icon } from "@iconify-icon/react";
 import Swal from "sweetalert2";
+import { Sideheader } from "@/components/sideheader/sideheader";
 
 export default function Signup() {
   const isMobile = useIsMobile();
@@ -88,7 +89,7 @@ export default function Signup() {
             </div>
             <h1 className="text-lg text-white font-bold">Endless Grind</h1>
           </div>
-          <Icon icon="ic:round-menu" width="28" height="28" className="text-white" />
+          <Sideheader/>
         </header>
       ) : (
         <header className="flex items-center justify-evenly bg-black py-2 px-4 z-20 relative">

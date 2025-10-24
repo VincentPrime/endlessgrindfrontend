@@ -11,6 +11,7 @@ import { AddPackage } from "@/components/adminsModal/addpromo";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
+import { Adminmobilesidebar } from "@/components/adminsidebar/adminmobilesidebar";
 
 interface Package {
   package_id: number;
@@ -82,6 +83,12 @@ export default function PackagePage() {
     <SidebarProvider>
       {!isMobile && <AppSidebar />}
       <SidebarInset>
+
+         {isMobile && (
+                    <header className="sticky top-0 z-50 bg-white flex shrink-0 items-center gap-2 border-b-2 px-5 py-2">
+                      <Adminmobilesidebar/>
+                    </header>
+        )}
         <h1 className="font-bold xl:text-6xl xl:ml-4 xl:mt-2">PROMOS / PACKAGES</h1>
         <div className="mr-auto xl:ml-4">
           <AddPackage onPackageAdded={fetchPackages} />

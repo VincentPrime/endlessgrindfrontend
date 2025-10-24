@@ -2,11 +2,11 @@
 
 import Header from "@/components/Header/header"
 import Image from "next/image"
-import { Card } from "@/components/ui/card"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { Icon } from "@iconify-icon/react"
 import Footer from "@/components/Footer/footer"
 import { useEffect, useState } from "react"
+import { Sideheader } from "@/components/sideheader/sideheader";
 import axios from "axios"
 import {
   Dialog,
@@ -72,7 +72,7 @@ export default function Coaches(){
                         </div>
                         <h1 className="text-lg text-white font-bold">Endless Grind</h1>
                       </div>
-                      <Icon icon="ic:round-menu" width="28" height="28" className="text-white" />
+                      <Sideheader/>
                     </header>
                   ) : (
                     <header className="flex items-center justify-evenly bg-black py-2 px-4 z-20 relative">

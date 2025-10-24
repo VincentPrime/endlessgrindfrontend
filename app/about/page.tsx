@@ -3,12 +3,27 @@ import Header from "@/components/Header/header"
 import Image from "next/image"
 import { Card } from "@/components/ui/card"
 import { useIsMobile } from "@/hooks/use-mobile"
-import { Icon } from "@iconify-icon/react"
 import Footer from "@/components/Footer/footer"
+import { Sideheader } from "@/components/sideheader/sideheader";
+
+
 
 export default function About() {
   const isMobile = useIsMobile()
 
+  if (isMobile === undefined) {
+  return (
+    <header className="sticky top-0 z-50 bg-black flex items-center justify-between px-6 py-3">
+      <div className="flex items-center gap-3">
+        <div className="relative h-12 w-12 overflow-hidden rounded-full">
+          <Image src="/icon.png" alt="Logo" fill className="object-cover" />
+        </div>
+        <h1 className="text-lg text-white font-bold">Endless Grind</h1>
+      </div>
+    </header>
+    )
+  }
+  
   return (
     <div className="min-h-screen flex flex-col">
       {/* Header */}
@@ -20,7 +35,7 @@ export default function About() {
             </div>
             <h1 className="text-lg text-white font-bold">Endless Grind</h1>
           </div>
-          <Icon icon="ic:round-menu" width="28" height="28" className="text-white" />
+          <Sideheader/>
         </header>
       ) : (
         <header className="flex items-center justify-evenly bg-black py-2 px-4 z-20 relative">

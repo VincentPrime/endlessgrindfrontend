@@ -9,6 +9,7 @@ import { Card } from "@/components/ui/card";
 import dynamic from 'next/dynamic';
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { Sideheader } from "@/components/sideheader/sideheader";
 
 // Dynamically import the map component (client-side only)
 const GymMap = dynamic(() => import('@/components/gymmap/GymMap'), {
@@ -53,6 +54,19 @@ export default function Home() {
     }
   };
 
+  if (isMobile === undefined) {
+  return (
+    <header className="sticky top-0 z-50 bg-black flex items-center justify-between px-6 py-3">
+      <div className="flex items-center gap-3">
+        <div className="relative h-12 w-12 overflow-hidden rounded-full">
+          <Image src="/icon.png" alt="Logo" fill className="object-cover" />
+        </div>
+        <h1 className="text-lg text-white font-bold">Endless Grind</h1>
+      </div>
+    </header>
+  )
+}
+
   return (
     <div className="min-h-screen flex flex-col">
       {/* HEADER */}
@@ -64,7 +78,7 @@ export default function Home() {
             </div>
             <h1 className="text-lg text-white font-bold">Endless Grind</h1>
           </div>
-          <Icon icon="ic:round-menu" width="28" height="28" className="text-white" />
+          <Sideheader />
         </header>
       ) : (
         <header className="flex items-center justify-evenly bg-black py-2 px-4 z-20 relative">

@@ -13,6 +13,7 @@ import { AddCoaches } from "@/components/adminsModal/addcoach"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import Swal from "sweetalert2";
+import { Adminmobilesidebar } from "@/components/adminsidebar/adminmobilesidebar"
 
 interface Coach {
   coach_id: number;
@@ -106,25 +107,12 @@ export default function Coaches() {
       {!isMobile && <AppSidebar />}
       <SidebarInset>
         {isMobile && (
-          <header className="sticky top-0 z-50 bg-white flex shrink-0 items-center gap-2 border-b-2 border-b-black px-11 py-2">
-            <div className="flex items-center gap-2 ">
-              <div className="relative h-20 w-20 overflow-hidden rounded-full">
-                <Image
-                  src={"/icon.png"}
-                  alt=""
-                  fill
-                  className="object-cover"
-                />
-              </div>
-              <div className="flex flex-col font-semibold">
-                <h1 className="text-xl">Vincent Fillar</h1>
-                <h1 className="text-gray-500">Web Developer</h1>
-              </div>
-            </div>
+          <header className="sticky top-0 z-50 bg-white flex shrink-0 items-center gap-2 border-b-2 border-b-black px-5 py-2">
+            <Adminmobilesidebar/>
           </header>
         )}
 
-        <h1 className="font-bold xl:text-6xl xl:ml-4 xl:mt-2">List of Coaches</h1>
+        <h1 className="font-bold xl:text-6xl xl:ml-4 xl:mt-2 text-2xl ml-5">List of Coaches</h1>
 
         <div className="flex flex-1 flex-col gap-4 p-4">
           {/* Top controls */}

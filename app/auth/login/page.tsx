@@ -13,6 +13,7 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { useUser } from "@/context/AuthContext"
 import Footer from "@/components/Footer/footer"
+import { Sideheader } from "@/components/sideheader/sideheader";
 
 export default function Login() {
   const isMobile = useIsMobile()
@@ -70,6 +71,19 @@ export default function Login() {
     }
   }
 
+  if (isMobile === undefined) {
+  return (
+    <header className="sticky top-0 z-50 bg-black flex items-center justify-between px-6 py-3">
+      <div className="flex items-center gap-3">
+        <div className="relative h-12 w-12 overflow-hidden rounded-full">
+          <Image src="/icon.png" alt="Logo" fill className="object-cover" />
+        </div>
+        <h1 className="text-lg text-white font-bold">Endless Grind</h1>
+      </div>
+    </header>
+  )
+}
+
   return (
     <div className="min-h-screen flex flex-col">
       {isMobile ? (
@@ -80,7 +94,7 @@ export default function Login() {
             </div>
             <h1 className="text-lg text-white font-bold">Endless Grind</h1>
           </div>
-          <Icon icon="ic:round-menu" width="28" height="28" className="text-white" />
+          <Sideheader/>
         </header>
       ) : (
         <header className="flex items-center justify-evenly bg-black py-2 px-4 z-20 relative">
