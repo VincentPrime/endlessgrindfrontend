@@ -35,61 +35,61 @@ export default function Coaches() {
 
   // ✅ Fetch all coaches
   const fetchCoaches = async () => {
-  setLoading(true)
-  try {
-    const res = await axios.get("http://localhost:4000/api/coaches/all", {
-      withCredentials: true,
-    })
-
-    // 🧩 FIX: make sure you use the actual array
-    setCoaches(res.data.coaches || [])
-  } catch (err: any) {
-    console.error("Error fetching coaches:", err)
-    alert(err.response?.data?.message || "Failed to fetch coaches")
-  } finally {
-    setLoading(false)
-  }
-}
-
-  // ✅ Delete coach
-const handleDelete = async (id: number) => {
-  const result = await Swal.fire({
-    title: "Are you sure you want to delete this coach?",
-    text: "This action cannot be undone.",
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonColor: "#3085d6",
-    cancelButtonColor: "#d33",
-    confirmButtonText: "Yes, delete it!",
-  });
-
-  if (result.isConfirmed) {
+    setLoading(true)
     try {
-      await axios.delete(`http://localhost:4000/api/coaches/delete/${id}`, {
+      const res = await axios.get("http://localhost:4000/api/coaches/all", {
         withCredentials: true,
-      });
+      })
 
-      await Swal.fire({
-        title: "Deleted!",
-        text: "Coach deleted successfully.",
-        icon: "success",
-        timer: 2000,
-        showConfirmButton: false,
-      });
-
-      // Refresh the list
-      fetchCoaches();
+      // 🧩 FIX: make sure you use the actual array
+      setCoaches(res.data.coaches || [])
     } catch (err: any) {
-      console.error("Error deleting coach:", err);
-
-      Swal.fire({
-        title: "Error!",
-        text:  "This coach currently has an active client and cannot be deleted until all sessions are completed.",
-        icon: "error",
-      });
+      console.error("Error fetching coaches:", err)
+      alert(err.response?.data?.message || "Failed to fetch coaches")
+    } finally {
+      setLoading(false)
     }
   }
-};
+
+
+  const handleDelete = async (id: number) => {
+    const result = await Swal.fire({
+      title: "Are you sure you want to delete this coach?",
+      text: "This action cannot be undone.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await axios.delete(`http://localhost:4000/api/coaches/delete/${id}`, {
+          withCredentials: true,
+        });
+
+        await Swal.fire({
+          title: "Deleted!",
+          text: "Coach deleted successfully.",
+          icon: "success",
+          timer: 2000,
+          showConfirmButton: false,
+        });
+
+        // Refresh the list
+        fetchCoaches();
+      } catch (err: any) {
+        console.error("Error deleting coach:", err);
+
+        Swal.fire({
+          title: "Error!",
+          text:  "This coach currently has an active client and cannot be deleted until all sessions are completed.",
+          icon: "error",
+        });
+      }
+    }
+  };
 
   useEffect(() => {
     fetchCoaches()

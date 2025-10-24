@@ -9,7 +9,7 @@ import { useIsMobile } from "@/hooks/use-mobile"
 import Image from "next/image"
 import RouteGuard from "@/components/protectedRoute/protectedRoutes"
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar } from 'recharts'
-import { Users, UserCheck, Package, TrendingUp, DollarSign } from 'lucide-react'
+import { Users, UserCheck, Package, } from 'lucide-react'
 
 interface DashboardStats {
   totalUsers: number

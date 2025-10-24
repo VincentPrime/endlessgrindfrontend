@@ -5,6 +5,7 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { useIsMobile } from "@/hooks/use-mobile";
 import Image from "next/image";
 import Swal from 'sweetalert2';
+
 interface Application {
   application_id: number;
   user_id: number;

@@ -1,0 +1,1 @@
+export const hosturl = "https://endlessgrindbackend.onrender.com"

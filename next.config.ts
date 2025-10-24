@@ -11,6 +11,15 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  // ✅ ADD THIS PROXY
+  async rewrites() {
+    return [
+      {
+        source: '/api/:path*',
+        destination: 'https://endlessgrindbackend.onrender.com/api/:path*',
+      },
+    ]
+  },
 }
 
 export default nextConfig

@@ -264,7 +264,6 @@ export default function Coaches(){
                 )}
               </DialogContent>
             </Dialog>
-
             <Footer/>
 </div>
     )
