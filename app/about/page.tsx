@@ -52,9 +52,10 @@ export default function About() {
           <section className="relative flex flex-col items-center justify-center text-white min-h-[90vh] py-12">
         {/* Background */}
         <div className="absolute inset-0 -z-10">
-          <img
+          <Image
             src="/pic4.png"
             alt="Background"
+            fill
             className="object-cover object-center w-full h-full"
           />
         </div>
@@ -71,9 +72,10 @@ export default function About() {
                 
                 {/* Circular Profile Image */}
                 <div className="relative w-64 h-64 rounded-full overflow-hidden mb-6 border-4 border-white/10">
-                  <img
+                  <Image
                     src="/pic5.png"
                     alt="CEO"
+                    fill
                     className="object-cover w-full h-full"
                   />
                 </div>

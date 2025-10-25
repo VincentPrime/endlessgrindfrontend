@@ -19,7 +19,7 @@ import { useUser } from "@/context/AuthContext";
 export function AppSidebar() {
   const pathname = usePathname()
   const router = useRouter();
-  const { user, setUser, logout } = useUser();
+  const {  logout } = useUser();
 
   const navItems = [
     { href: "/Admin/dashboard", label: "DASHBOARD", icon: "material-symbols-light:dashboard-rounded" },

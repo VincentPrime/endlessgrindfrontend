@@ -8,13 +8,18 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import axios from "axios";
+import axios, {AxiosError} from "axios";
 import { useState } from "react";
 import { Card } from "../ui/card";
 import { Input } from "../ui/input";
 import { uploadCoachImage } from "@/lib/supabase"; // Adjust path as needed
 import Image from "next/image";
 import Swal from "sweetalert2";
+
+
+interface ErrorResponse {
+  message?: string;
+}
 
 export function AddCoaches() {
   const [formData, setFormData] = useState({
@@ -86,7 +91,8 @@ export function AddCoaches() {
         availability: availabilityText,
         performance_rating: parseFloat(formData.performance_rating) || 0.0,
       };
-
+      
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const res = await axios.post("/api/coaches/signup", payload, {
         withCredentials: true,
       });
@@ -118,9 +124,15 @@ export function AddCoaches() {
 
       setIsOpen(false);
       window.location.reload();
-    } catch (err: any) {
-      console.error(err);
-      alert(err.response?.data?.message || "Failed to add coach.");
+    } catch (err: unknown) {
+     console.error("❌ Update error:", err);
+      const error = err as AxiosError<ErrorResponse>;
+      Swal.fire({
+        text: error.response?.data?.message || "Update failed",
+        icon: "error",
+        timer: 2000,
+        showConfirmButton: false,
+      });
     } finally {
       setLoading(false);
       setUploadingImage(false);

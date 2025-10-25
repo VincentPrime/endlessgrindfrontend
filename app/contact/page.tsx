@@ -10,6 +10,12 @@ import Footer from "@/components/Footer/footer";
 import emailjs from "emailjs-com";
 import { useState } from "react";
 import { Sideheader } from "@/components/sideheader/sideheader";
+import { AxiosError } from "axios";
+
+interface ErrorResponse {
+  message?: string;
+}
+
 export default function Contact() {
   const isMobile = useIsMobile();
 
@@ -23,12 +29,12 @@ export default function Contact() {
   const [loading, setLoading] = useState(false);
 
   // Handle input changes
-  const handleChange = (e: { target: { name: any; value: any; }; }) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   // Handle form submission
-  const handleSubmit = (e: { preventDefault: () => void; }) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
 

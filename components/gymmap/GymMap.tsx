@@ -6,6 +6,14 @@ import 'leaflet/dist/leaflet.css';
 import 'leaflet-routing-machine';
 import 'leaflet-routing-machine/dist/leaflet-routing-machine.css';
 
+// ✅ Define proper type for Leaflet Routing Control
+interface RoutingControl extends L.Control {
+  getPlan(): unknown;
+  getWaypoints(): L.Routing.Waypoint[];
+  setWaypoints(waypoints: L.LatLng[]): this;
+  route(): void;
+}
+
 interface GymMapProps {
   className?: string;
 }
@@ -14,10 +22,9 @@ export default function GymMap({ className = '' }: GymMapProps) {
   const mapRef = useRef<L.Map | null>(null);
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const userMarkerRef = useRef<L.Marker | null>(null);
-  const routingControlRef = useRef<any>(null);
+  const routingControlRef = useRef<RoutingControl | null>(null);
   const watchIdRef = useRef<number | null>(null);
   const isMapReadyRef = useRef(false);
-  const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
   const [distance, setDistance] = useState<string>('');
   const [error, setError] = useState<string>('');
 
@@ -80,7 +87,6 @@ export default function GymMap({ className = '' }: GymMapProps) {
 
           const { latitude, longitude } = position.coords;
           const userPos: [number, number] = [latitude, longitude];
-          setUserLocation(userPos);
 
           // Custom user location icon
           const userIcon = L.divIcon({
@@ -117,7 +123,7 @@ export default function GymMap({ className = '' }: GymMapProps) {
               const ctrl = routingControlRef.current;
               routingControlRef.current = null;
               mapRef.current.removeControl(ctrl);
-            } catch (e) {
+            } catch {
               // Silently handle removal errors
             }
           }
@@ -128,7 +134,12 @@ export default function GymMap({ className = '' }: GymMapProps) {
               if (!mapRef.current || !isMapReadyRef.current) return;
 
               try {
-                const routingControl = (L as any).Routing.control({
+                // ✅ Properly type the Leaflet Routing control
+                const routingControl = (L as typeof L & {
+                  Routing: {
+                    control: (options: unknown) => RoutingControl;
+                  };
+                }).Routing.control({
                   waypoints: [
                     L.latLng(userPos[0], userPos[1]),
                     L.latLng(GYM_LOCATION[0], GYM_LOCATION[1])
@@ -160,7 +171,7 @@ export default function GymMap({ className = '' }: GymMapProps) {
                   const bounds = L.latLngBounds([userPos, GYM_LOCATION]);
                   mapRef.current.fitBounds(bounds, { padding: [50, 50] });
                 }
-              } catch (e) {
+              } catch {
                 // Routing failed, but we can still show the map
                 console.log('Routing not available');
               }
@@ -222,7 +233,7 @@ export default function GymMap({ className = '' }: GymMapProps) {
         if (mapRef.current) {
           try {
             mapRef.current.removeControl(ctrl);
-          } catch (e) {
+          } catch {
             // Silently handle cleanup errors
           }
         }
@@ -236,7 +247,7 @@ export default function GymMap({ className = '' }: GymMapProps) {
         if (mapRef.current) {
           try {
             mapRef.current.removeLayer(marker);
-          } catch (e) {
+          } catch {
             // Silently handle cleanup errors
           }
         }
@@ -247,7 +258,7 @@ export default function GymMap({ className = '' }: GymMapProps) {
         try {
           mapRef.current.remove();
           mapRef.current = null;
-        } catch (e) {
+        } catch {
           // Silently handle cleanup errors
         }
       }
@@ -257,7 +268,7 @@ export default function GymMap({ className = '' }: GymMapProps) {
         style.remove();
       }
     };
-  }, []);
+  }, [GYM_LOCATION]);
 
   return (
     <div className={`relative ${className}`}>

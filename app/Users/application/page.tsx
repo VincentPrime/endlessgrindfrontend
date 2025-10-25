@@ -206,7 +206,7 @@ export default function ApplicationForm(){
                         Please check back later for updates.
                       </p>
                       <p className="text-sm text-gray-500 mb-6">
-                        If you've completed payment and want to cancel, you can request a refund.
+                        If you&apos;ve completed payment and want to cancel, you can request a refund.
                       </p>
                     </>
                   )}

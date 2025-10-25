@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import axios from "axios"
+import axios, { AxiosError } from "axios"
 import {
   SidebarInset,
   SidebarProvider,
@@ -26,6 +26,10 @@ interface User {
   created_at?: string;
 }
 
+interface ErrorResponse {
+  message?: string;
+}
+
 export default function Users() {
   const isMobile = useIsMobile()
   const [users, setUsers] = useState<User[]>([])
@@ -36,13 +40,14 @@ export default function Users() {
   const fetchAllUsers = async () => {
     setLoading(true)
     try {
-      const res = await axios.get("/api/auth/allUsers", {
+      const res = await axios.get<User[]>("/api/auth/allUsers", {
         withCredentials: true,
       })
       setUsers(res.data)
-    } catch (err: any) {
+    } catch (err) {
       console.error("Error fetching users:", err)
-      alert(err.response?.data?.message || "Failed to fetch users")
+      const error = err as AxiosError<ErrorResponse>;
+      alert(error.response?.data?.message || "Failed to fetch users")
     } finally {
       setLoading(false)
     }
@@ -76,12 +81,13 @@ export default function Users() {
 
         // Refresh user list
         fetchAllUsers();
-      } catch (err: any) {
+      } catch (err) {
         console.error("Error deleting user:", err);
+        const error = err as AxiosError<ErrorResponse>;
 
         Swal.fire({
           title: "Error!",
-          text: err.response?.data?.message || "Failed to delete user.",
+          text: error.response?.data?.message || "Failed to delete user.",
           icon: "error",
         });
       }

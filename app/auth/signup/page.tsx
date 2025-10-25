@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import axios from "axios";
+import axios, {AxiosError} from "axios";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -12,6 +12,10 @@ import { Separator } from "@radix-ui/react-separator";
 import { useIsMobile } from "@/hooks/use-mobile";
 import Swal from "sweetalert2";
 import { Sideheader } from "@/components/sideheader/sideheader";
+
+interface ErrorResponse {
+  message?: string;
+}
 
 export default function Signup() {
   const isMobile = useIsMobile();
@@ -46,7 +50,7 @@ export default function Signup() {
         weight: formData.weight || null,
         height: formData.height || null,
       };
-
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const res = await axios.post("/api/auth/signup", payload, {
         withCredentials: true,
       });
@@ -70,9 +74,15 @@ export default function Signup() {
         email: "",
         password: "",
       });
-    } catch (err: any) {
-      console.error("❌ Signup error:", err);
-      alert(err.response?.data?.message || "Signup failed");
+    } catch (err: unknown) {
+        console.error("❌ Update error:", err);
+        const error = err as AxiosError<ErrorResponse>;
+        Swal.fire({
+          text: error.response?.data?.message || "Update failed",
+          icon: "error",
+          timer: 2000,
+          showConfirmButton: false,
+        });
     } finally {
       setLoading(false);
     }

@@ -12,8 +12,33 @@ import { Separator } from "../ui/separator";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useUser } from "@/context/AuthContext";
-import axios from "axios";
+import { useUser, isCoach as isCoachUser, isRegularUser } from "@/context/AuthContext";
+import axios, { AxiosError } from "axios";
+
+interface ErrorResponse {
+  message?: string;
+}
+
+// ✅ Import or define the User types
+interface RegularUser {
+  user_id: number;
+  firstname: string;
+  middlename?: string | null;
+  lastname: string;
+  email: string;
+  role: "admin" | "user";
+  image?: string;
+}
+
+interface CoachUser {
+  user_id: number;
+  coach_name: string;
+  email: string;
+  role: "coach";
+  profile_image?: string;
+}
+
+type User = RegularUser | CoachUser;
 
 export function CoachSidebar() {
   const pathname = usePathname();
@@ -24,10 +49,8 @@ export function CoachSidebar() {
   if (!user) return null;
 
   const navItems = [
-
     { href: "/Coach/clients", label: "CLIENTS", icon: "nimbus:stats" },
     { href: "/Coach/Coachsettings", label: "SETTINGS", icon: "mdi:gear" },
-  
   ];
 
   const handleLogout = async () => {
@@ -41,54 +64,54 @@ export function CoachSidebar() {
         alert("Logout failed");
       }
     } catch (error) {
-      console.error("Logout error:", error);
+      const err = error as AxiosError<ErrorResponse>;
+      console.error("Logout error:", err.response?.data?.message || err.message);
       alert("Logout failed");
     }
   };
 
-  // ✅ Type guard to check if user is a coach
-  const isCoach = (user: any): user is { coach_name: string; profile_image?: string; role: string } => {
-    return 'coach_name' in user;
+  // ✅ Use the imported type guard from AuthContext
+  const isCoach = (user: User): user is CoachUser => {
+    return user.role === "coach";
   };
 
   // ✅ Get display name based on user type
   const displayName = isCoach(user) 
     ? user.coach_name 
-    : `${(user as any).firstname || ''} ${(user as any).lastname || ''}`.trim() || "User";
+    : `${(user as RegularUser).firstname || ''} ${(user as RegularUser).lastname || ''}`.trim() || "User";
   
   const displayRole = user.role?.toUpperCase() || "USER";
   
   // ✅ Ensure we always have a valid image path
-const getProfileImage = () => {
-  let imageUrl = "/user.png"; // default
+  const getProfileImage = () => {
+    let imageUrl = "/user.png"; // default
 
-  if (isCoach(user)) {
-    imageUrl = user.profile_image ?? "/user.png";
-  } else {
-    imageUrl = (user as any).image ?? "/user.png";
-  }
+    if (isCoach(user)) {
+      imageUrl = user.profile_image ?? "/user.png";
+    } else {
+      imageUrl = (user as RegularUser).image ?? "/user.png";
+    }
 
-  // ✅ Always sanitize before returning
-  if (
-    !imageUrl ||
-    imageUrl.trim() === "" ||
-    imageUrl === "null" ||
-    imageUrl === "undefined"
-  ) {
-    return "/user.png";
-  }
+    // ✅ Always sanitize before returning
+    if (
+      !imageUrl ||
+      imageUrl.trim() === "" ||
+      imageUrl === "null" ||
+      imageUrl === "undefined"
+    ) {
+      return "/user.png";
+    }
 
-  // ✅ If Supabase or HTTP image, return as is
-  if (imageUrl.startsWith("http")) return imageUrl;
+    // ✅ If Supabase or HTTP image, return as is
+    if (imageUrl.startsWith("http")) return imageUrl;
 
-  // ✅ If it’s a relative path (like stored file), prefix properly
-  if (imageUrl.startsWith("/")) return imageUrl;
+    // ✅ If it's a relative path (like stored file), prefix properly
+    if (imageUrl.startsWith("/")) return imageUrl;
 
-  // ✅ Default fallback
-  return `/user.png`;
-};
+    // ✅ Default fallback
+    return `/user.png`;
+  };
 
-  
   const profileImage = getProfileImage();
 
   return (

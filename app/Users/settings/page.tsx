@@ -13,8 +13,12 @@ import { useUser, isRegularUser } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Swal from "sweetalert2";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { Usermobilesidebar } from "@/components/userssidebar/usermobilesidebar";
+
+interface ErrorResponse {
+  message?: string;
+}
 
 export default function Setting(){
     const { user, setUser } = useUser();
@@ -63,59 +67,60 @@ export default function Setting(){
     }
   };
 
-    const handleUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setLoading(true);
+  const handleUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
+  setLoading(true);
 
-    try {
-      const formDataToSend = new FormData();
+  try {
+    const formDataToSend = new FormData();
 
-      // Only append fields that have values
-      if (formData.firstname) formDataToSend.append("firstname", formData.firstname);
-      if (formData.middlename) formDataToSend.append("middlename", formData.middlename);
-      if (formData.lastname) formDataToSend.append("lastname", formData.lastname);
-      if (formData.address) formDataToSend.append("address", formData.address);
-      if (formData.email) formDataToSend.append("email", formData.email);
-      if (formData.password) formDataToSend.append("password", formData.password);
-      if (profileImage) formDataToSend.append("profileImage", profileImage);
+    // Only append fields that have values
+    if (formData.firstname) formDataToSend.append("firstname", formData.firstname);
+    if (formData.middlename) formDataToSend.append("middlename", formData.middlename);
+    if (formData.lastname) formDataToSend.append("lastname", formData.lastname);
+    if (formData.address) formDataToSend.append("address", formData.address);
+    if (formData.email) formDataToSend.append("email", formData.email);
+    if (formData.password) formDataToSend.append("password", formData.password);
+    if (profileImage) formDataToSend.append("profileImage", profileImage);
 
-      const res = await axios.put(
-        "/api/auth/update-profile",
-        formDataToSend,
-        {
-          withCredentials: true,
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+    const res = await axios.put(
+      "/api/auth/update-profile",
+      formDataToSend,
+      {
+        withCredentials: true,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
 
-      // Update user in context and localStorage
-      const updatedUser = res.data.user;
-      setUser(updatedUser);
-      localStorage.setItem("user", JSON.stringify(updatedUser));
+    // Update user in context and localStorage
+    const updatedUser = res.data.user;
+    setUser(updatedUser);
+    localStorage.setItem("user", JSON.stringify(updatedUser));
 
-      Swal.fire({
-        text: "Profile updated successfully!",
-        icon: "success",
-        timer: 2000,
-        showConfirmButton: false,
-      });
+    Swal.fire({
+      text: "Profile updated successfully!",
+      icon: "success",
+      timer: 2000,
+      showConfirmButton: false,
+    });
 
-      // Clear password field after successful update
-      setFormData({ ...formData, password: "" });
-    } catch (err: any) {
-      console.error("❌ Update error:", err);
-      Swal.fire({
-        text: err.response?.data?.message || "Update failed",
-        icon: "error",
-        timer: 2000,
-        showConfirmButton: false,
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+    // Clear password field after successful update
+    setFormData({ ...formData, password: "" });
+  } catch (err: unknown) {
+    console.error("❌ Update error:", err);
+    const error = err as AxiosError<ErrorResponse>;
+    Swal.fire({
+      text: error.response?.data?.message || "Update failed",
+      icon: "error",
+      timer: 2000,
+      showConfirmButton: false,
+    });
+  } finally {
+    setLoading(false);
+  }
+};
 
     return(
         <RouteGuard allowedRoles={["user"]}>

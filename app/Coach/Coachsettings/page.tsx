@@ -12,9 +12,21 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useUser } from "@/context/AuthContext"
 import { uploadCoachImage } from "@/lib/supabase"
-import axios from "axios"
+import axios, { AxiosError } from "axios"
 import Swal from "sweetalert2"
 import { Coachmobilesidebar } from "@/components/coachsidebar/coachmobilesidebar"
+
+// ✅ REMOVED duplicate CoachUser interface - using the one from AuthContext
+
+interface UpdatePayload {
+  coach_name?: string;
+  email?: string;
+  password?: string;
+  specialty?: string;
+  years_of_experience?: number;
+  availability?: string;
+  profile_image?: string;
+}
 
 export default function CoachSettings() {
   const isMobile = useIsMobile()
@@ -38,16 +50,16 @@ export default function CoachSettings() {
   useEffect(() => {
     if (user && user.role === "coach") {
       setFormData({
-        coach_name: (user as any).coach_name || "",
+        coach_name: user.coach_name || "",
         email: user.email || "",
         password: "", // Never pre-fill password
-        specialty: (user as any).specialty || "",
-        years_of_experience: (user as any).years_of_experience?.toString() || "",
-        availability: (user as any).availability || "",
+        specialty: user.specialty || "",
+        years_of_experience: user.years_of_experience?.toString() || "",
+        availability: user.availability || "",
       })
       
-      if ((user as any).profile_image) {
-        setImagePreview((user as any).profile_image)
+      if (user.profile_image) {
+        setImagePreview(user.profile_image)
       }
     }
   }, [user])
@@ -69,115 +81,112 @@ export default function CoachSettings() {
   }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-  e.preventDefault()
-  setLoading(true)
+    e.preventDefault()
+    setLoading(true)
 
-  try {
-    // Build payload with only changed fields
-    const payload: any = {}
-    
-    if (formData.coach_name && formData.coach_name !== (user as any)?.coach_name) {
-      payload.coach_name = formData.coach_name
-    }
-    
-    if (formData.email && formData.email !== user?.email) {
-      payload.email = formData.email
-    }
-    
-    if (formData.password) {
-      payload.password = formData.password
-    }
-    
-    if (formData.specialty && formData.specialty !== (user as any)?.specialty) {
-      payload.specialty = formData.specialty
-    }
-    
-    if (formData.years_of_experience && formData.years_of_experience !== (user as any)?.years_of_experience?.toString()) {
-      payload.years_of_experience = parseInt(formData.years_of_experience)
-    }
-    
-    if (formData.availability && formData.availability !== (user as any)?.availability) {
-      payload.availability = formData.availability
-    }
-
-    // Upload new image if selected
-    if (imageFile) {
-      setUploadingImage(true)
-      const imageUrl = await uploadCoachImage(imageFile)
-      payload.profile_image = imageUrl
-      setUploadingImage(false)
-    }
-
-    // Check if there's anything to update
-    if (Object.keys(payload).length === 0) {
-      await Swal.fire({
-        text: "No changes detected.",
-        icon: "info",
-        timer: 2000,
-        showConfirmButton: false,
-      })
-      setLoading(false)
-      return
-    }
-
-    // Send update request
-    const res = await axios.put(
-      `/api/coaches/update/${(user as any)?.user_id}`,
-      payload,
-      { withCredentials: true }
-    )
-
-    if (res.data.success) {
-      // ✅ Update user context with the COMPLETE returned data
-      const updatedUser = { 
-        ...user, 
-        ...res.data.coach,
-        // Ensure we keep the user_id and role
-        user_id: (user as any)?.user_id,
-        role: 'coach'
+    try {
+      // ✅ No need to cast - TypeScript knows user is CoachUser in this block
+      if (!user || user.role !== "coach") return;
+      
+      // Build payload with only changed fields
+      const payload: UpdatePayload = {}
+      
+      if (formData.coach_name && formData.coach_name !== user.coach_name) {
+        payload.coach_name = formData.coach_name
       }
       
-      // Update context
-      setUser(updatedUser)
+      if (formData.email && formData.email !== user.email) {
+        payload.email = formData.email
+      }
       
-      // Update localStorage
-      localStorage.setItem("user", JSON.stringify(updatedUser))
+      if (formData.password) {
+        payload.password = formData.password
+      }
+      
+      if (formData.specialty && formData.specialty !== user.specialty) {
+        payload.specialty = formData.specialty
+      }
+      
+      if (formData.years_of_experience && formData.years_of_experience !== user.years_of_experience?.toString()) {
+        payload.years_of_experience = parseInt(formData.years_of_experience)
+      }
+      
+      if (formData.availability && formData.availability !== user.availability) {
+        payload.availability = formData.availability
+      }
 
+      // Upload new image if selected
+      if (imageFile) {
+        setUploadingImage(true)
+        const imageUrl = await uploadCoachImage(imageFile)
+        payload.profile_image = imageUrl
+        setUploadingImage(false)
+      }
+
+      // Check if there's anything to update
+      if (Object.keys(payload).length === 0) {
+        await Swal.fire({
+          text: "No changes detected.",
+          icon: "info",
+          timer: 2000,
+          showConfirmButton: false,
+        })
+        setLoading(false)
+        return
+      }
+
+      // Send update request
+      const res = await axios.put<{ success: boolean; coach: Partial<typeof user> }>(
+        `/api/coaches/update/${user.user_id}`,
+        payload,
+        { withCredentials: true }
+      )
+
+      if (res.data.success) {
+        // ✅ Update user context - now type-safe!
+        const updatedUser = { 
+          ...user, 
+          ...res.data.coach,
+          user_id: user.user_id,
+          role: 'coach' as const
+        };
+        
+        setUser(updatedUser);
+        localStorage.setItem("user", JSON.stringify(updatedUser));
+
+        await Swal.fire({
+          text: "Profile updated successfully!",
+          icon: "success",
+          timer: 2000,
+          showConfirmButton: false,
+        })
+
+        // Clear password field and image file
+        setFormData({ 
+          ...formData, 
+          password: "",
+          coach_name: updatedUser.coach_name || formData.coach_name,
+          email: updatedUser.email || formData.email,
+          specialty: updatedUser.specialty || formData.specialty,
+          years_of_experience: updatedUser.years_of_experience?.toString() || formData.years_of_experience,
+          availability: updatedUser.availability || formData.availability,
+        })
+        
+        setImageFile(null)
+      }
+    } catch (err) {
+      console.error(err)
+      const error = err as AxiosError<{ message?: string }>;
       await Swal.fire({
-        text: "Profile updated successfully!",
-        icon: "success",
-        timer: 2000,
-        showConfirmButton: false,
+        text: error.response?.data?.message || "Failed to update profile.",
+        icon: "error",
       })
-
-      // Clear password field and image file
-      setFormData({ 
-        ...formData, 
-        password: "",
-        // Update form with new data to prevent "no changes" on next save
-        coach_name: updatedUser.coach_name || formData.coach_name,
-        email: updatedUser.email || formData.email,
-        specialty: updatedUser.specialty || formData.specialty,
-        years_of_experience: updatedUser.years_of_experience?.toString() || formData.years_of_experience,
-        availability: updatedUser.availability || formData.availability,
-      })
-      
-      setImageFile(null)
-      
-      // ✅ REMOVED window.location.reload()
-      // The UI will update automatically because we updated the context and state
+    } finally {
+      setLoading(false)
+      setUploadingImage(false)
     }
-  } catch (err: any) {
-    console.error(err)
-    await Swal.fire({
-      text: err.response?.data?.message || "Failed to update profile.",
-      icon: "error",
-    })
-  } finally {
-    setLoading(false)
-    setUploadingImage(false)
   }
-}
+
   return (
     <RouteGuard allowedRoles={["coach"]}>
       <SidebarProvider>

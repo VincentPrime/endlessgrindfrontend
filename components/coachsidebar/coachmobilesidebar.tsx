@@ -5,9 +5,34 @@ import { Icon } from "@iconify-icon/react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useUser } from "@/context/AuthContext";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import Image from "next/image";
 import { Separator } from "@/components/ui/separator";
+
+interface ErrorResponse {
+  message?: string;
+}
+
+// ✅ Define the User types
+interface RegularUser {
+  user_id: number;
+  firstname: string;
+  middlename?: string | null;
+  lastname: string;
+  email: string;
+  role: "admin" | "user";
+  image?: string;
+}
+
+interface CoachUser {
+  user_id: number;
+  coach_name: string;
+  email: string;
+  role: "coach";
+  profile_image?: string;
+}
+
+type User = RegularUser | CoachUser;
 
 import {
   Sheet,
@@ -46,22 +71,21 @@ export function Coachmobilesidebar() {
         alert("Logout failed");
       }
     } catch (error) {
-      console.error("Logout error:", error);
+      const err = error as AxiosError<ErrorResponse>;
+      console.error("Logout error:", err.response?.data?.message || err.message);
       alert("Logout failed");
     }
   };
 
   // ✅ Type guard to check if user is a coach
-  const isCoach = (
-    user: any
-  ): user is { coach_name: string; profile_image?: string; role: string } => {
-    return "coach_name" in user;
+  const isCoach = (user: User): user is CoachUser => {
+    return user.role === "coach";
   };
 
   // ✅ Get display name based on user type
   const displayName = isCoach(user)
     ? user.coach_name
-    : `${(user as any).firstname || ""} ${(user as any).lastname || ""}`.trim() ||
+    : `${(user as RegularUser).firstname || ""} ${(user as RegularUser).lastname || ""}`.trim() ||
       "User";
 
   const displayRole = user.role?.toUpperCase() || "USER";
@@ -73,7 +97,7 @@ export function Coachmobilesidebar() {
     if (isCoach(user)) {
       imageUrl = user.profile_image ?? "/user.png";
     } else {
-      imageUrl = (user as any).image ?? "/user.png";
+      imageUrl = (user as RegularUser).image ?? "/user.png";
     }
 
     // ✅ Always sanitize before returning

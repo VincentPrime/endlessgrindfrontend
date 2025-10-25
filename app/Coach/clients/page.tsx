@@ -187,7 +187,7 @@ const handleCompleteProgram = async (applicationId: number, clientName: string) 
             <div className="bg-gray-50 border border-gray-200 rounded-lg p-12 text-center">
               <div className="text-6xl mb-4">👥</div>
               <h2 className="text-xl font-bold text-gray-900 mb-2">No Clients Yet</h2>
-              <p className="text-gray-600">You don't have any assigned clients at the moment.</p>
+              <p className="text-gray-600">You don&apos;t have any assigned clients at the moment.</p>
             </div>
           ) : (
             <div className="grid gap-6">

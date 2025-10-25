@@ -6,25 +6,29 @@ import axios from "axios";
 interface RegularUser {
   user_id: number;
   firstname: string;
-  middlename?: string | null;  // ✅ Added
+  middlename?: string | null;
   lastname: string;
   sex?: string;
   civil_status?: string;
   date_of_birth?: string;
   weight?: number | null;
   height?: number | null;
-  address?: string | null;  // ✅ Added
+  address?: string | null;
   email: string;
   role: "admin" | "user";
   image?: string;
 }
 
+// ✅ UPDATED CoachUser interface with ALL fields
 interface CoachUser {
-  user_id: number;  // Changed from 'id' to match backend
+  user_id: number;
   coach_name: string;
   email: string;
   role: "coach";
   profile_image?: string;
+  specialty?: string;  // ✅ Added
+  years_of_experience?: number;  // ✅ Added
+  availability?: string;  // ✅ Added
 }
 
 // ✅ Union type for User

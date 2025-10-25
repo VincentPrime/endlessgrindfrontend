@@ -7,12 +7,17 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { Separator } from "@radix-ui/react-separator"
-import axios from "axios"
+import axios, {AxiosError} from "axios"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { useUser } from "@/context/AuthContext"
 import Footer from "@/components/Footer/footer"
 import { Sideheader } from "@/components/sideheader/sideheader";
+import Swal from "sweetalert2"
+
+interface ErrorResponse {
+  message?: string;
+}
 
 export default function Login() {
   const isMobile = useIsMobile()
@@ -55,9 +60,14 @@ export default function Login() {
       } else {
         router.push("/Users/schedule")
       }
-    } catch (err: any) {
-      console.error("Login error:", err)
-      setError(err.response?.data?.message || "Invalid email or password")
+    } catch (err: unknown) {
+      const error = err as AxiosError<ErrorResponse>;
+      Swal.fire({
+      text: error.response?.data?.message || "Update failed",
+      icon: "error",
+      timer: 2000,
+      showConfirmButton: false,
+  });
     } finally {
       setLoading(false)
     }
@@ -153,7 +163,7 @@ export default function Login() {
                 {loading ? "Logging in..." : "Login"}
               </Button>
               <h1 className="text-white text-center xl:mt-5 mt-2">
-                Don't have an account?{" "}
+                Don&apos;t have an account?{" "}
                 <Link href="/auth/signup" className="text-amber-400 hover:underline">
                   Sign up
                 </Link>

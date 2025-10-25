@@ -105,7 +105,7 @@ export default function Home() {
           <div className="absolute inset-0 bg-black/60" /> 
         </div>
         <h1 className="font-bold text-3xl xl:text-7xl w-full">
-          <span className="text-amber-400">GRIND FIT</span>: LET'S GRIND YOUR BODY
+          <span className="text-amber-400">GRIND FIT</span>: LET&apos;S GRIND YOUR BODY
         </h1>
       </section>
 
@@ -154,7 +154,7 @@ export default function Home() {
           Your <span className="text-amber-400">body</span> can do it
         </h1>
         <h1 className="font-bold text-3xl sm:text-4xl md:text-5xl leading-snug">
-          It's time to convince your <span className="text-amber-400">mind.</span>
+          It&apos;s time to convince your <span className="text-amber-400">mind.</span>
         </h1>
       </section>
 

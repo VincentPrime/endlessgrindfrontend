@@ -58,7 +58,8 @@ export default function MySchedule() {
       setLoading(false);
     }
   };
-
+  
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
   const calculateBMI = (weight: number, height: number) => {
     if (!weight || !height) return 'N/A';
     const heightInMeters = height / 100;

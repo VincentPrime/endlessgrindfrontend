@@ -1,14 +1,13 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import axios from "axios"
+import axios, { AxiosError } from "axios"
 import {
   SidebarInset,
   SidebarProvider,
 } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/adminsidebar/app-sidebar"
 import { useIsMobile } from "@/hooks/use-mobile"
-import Image from "next/image"
 import { AddCoaches } from "@/components/adminsModal/addcoach"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -28,6 +27,14 @@ interface Coach {
   is_active?: boolean;
 }
 
+interface ApiResponse {
+  coaches: Coach[];
+}
+
+interface ErrorResponse {
+  message?: string;
+}
+
 export default function Coaches() {
   const isMobile = useIsMobile()
   const [coaches, setCoaches] = useState<Coach[]>([])
@@ -38,15 +45,16 @@ export default function Coaches() {
   const fetchCoaches = async () => {
     setLoading(true)
     try {
-      const res = await axios.get("/api/coaches/all", {
+      const res = await axios.get<ApiResponse>("/api/coaches/all", {
         withCredentials: true,
       })
 
       // 🧩 FIX: make sure you use the actual array
       setCoaches(res.data.coaches || [])
-    } catch (err: any) {
+    } catch (err) {
       console.error("Error fetching coaches:", err)
-      alert(err.response?.data?.message || "Failed to fetch coaches")
+      const error = err as AxiosError<ErrorResponse>;
+      alert(error.response?.data?.message || "Failed to fetch coaches")
     } finally {
       setLoading(false)
     }
@@ -80,12 +88,13 @@ export default function Coaches() {
 
         // Refresh the list
         fetchCoaches();
-      } catch (err: any) {
+      } catch (err) {
         console.error("Error deleting coach:", err);
+        const error = err as AxiosError<ErrorResponse>;
 
         Swal.fire({
           title: "Error!",
-          text:  "This coach currently has an active client and cannot be deleted until all sessions are completed.",
+          text: error.response?.data?.message || "This coach currently has an active client and cannot be deleted until all sessions are completed.",
           icon: "error",
         });
       }
