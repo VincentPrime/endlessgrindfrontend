@@ -3,7 +3,6 @@ import Header from "@/components/Header/header"
 import Image from "next/image"
 import { Card } from "@/components/ui/card"
 import { useIsMobile } from "@/hooks/use-mobile"
-import { Icon } from "@iconify-icon/react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
@@ -31,7 +30,7 @@ export default function Login() {
     
     try {
       const response = await axios.post(
-        "http://localhost:4000/api/auth/login",
+        "/api/auth/login",
         { email, password },
         { withCredentials: true }
       )

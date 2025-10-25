@@ -61,7 +61,7 @@ export default function ApplicationForm(){
 
     const checkExistingApplication = async () => {
       try {
-        const response = await fetch('http://localhost:4000/api/applications/my-application', {
+        const response = await fetch('/api/applications/my-application', {
           credentials: 'include'
         });
         
@@ -90,7 +90,7 @@ export default function ApplicationForm(){
       setCancelLoading(true);
 
       try {
-        const response = await fetch(`http://localhost:4000/api/applications/cancel/${applicationId}`, {
+        const response = await fetch(`/api/applications/cancel/${applicationId}`, {
           method: 'DELETE',
           credentials: 'include'
         });
@@ -115,8 +115,8 @@ export default function ApplicationForm(){
     const fetchPackagesAndCoaches = async () => {
       try {
         const [packagesRes, coachesRes] = await Promise.all([
-          fetch('http://localhost:4000/api/getpackages', { credentials: 'include' }),
-          fetch('http://localhost:4000/api/coaches/all', { credentials: 'include' })
+          fetch('/api/getpackages', { credentials: 'include' }),
+          fetch('/api/coaches/all', { credentials: 'include' })
         ]);
 
         const packagesData = await packagesRes.json();
@@ -141,7 +141,7 @@ export default function ApplicationForm(){
       setLoading(true);
   
       try {
-        const response = await fetch('http://localhost:4000/api/applications/submit', {
+        const response = await fetch('/api/applications/submit', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',

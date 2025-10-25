@@ -41,7 +41,7 @@ export default function Coaches(){
     useEffect(() => {
       const fetchCoaches = async () => {
         try {
-          const response = await axios.get("http://localhost:4000/api/coaches/all", {
+          const response = await axios.get("/api/coaches/all", {
             withCredentials: true
           })
           if (response.data.success) {

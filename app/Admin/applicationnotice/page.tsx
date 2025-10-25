@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react';
 import { AppSidebar } from "@/components/adminsidebar/app-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { useIsMobile } from "@/hooks/use-mobile";
-import Image from "next/image";
 import Swal from 'sweetalert2';
 import { Adminmobilesidebar } from '@/components/adminsidebar/adminmobilesidebar';
 
@@ -51,7 +50,7 @@ export default function ApplicationNotice() {
 
   const fetchApplications = async () => {
     try {
-      const response = await fetch('http://localhost:4000/api/applications/all', {
+      const response = await fetch('/api/applications/all', {
         credentials: 'include'
       });
       const data = await response.json();
@@ -81,7 +80,7 @@ export default function ApplicationNotice() {
 
     setActionLoading(true);
     try {
-      const response = await fetch(`http://localhost:4000/api/applications/${applicationId}/approve`, {
+      const response = await fetch(`/api/applications/${applicationId}/approve`, {
         method: "PUT",
         credentials: "include",
       });
@@ -134,7 +133,7 @@ export default function ApplicationNotice() {
 
   setActionLoading(true);
   try {
-    const response = await fetch(`http://localhost:4000/api/applications/${applicationId}/decline`, {
+    const response = await fetch(`/api/applications/${applicationId}/decline`, {
       method: "PUT",
       credentials: "include",
     });
@@ -190,7 +189,7 @@ const handleCancel = async (applicationId: number) => {
 
   setActionLoading(true);
   try {
-    const response = await fetch(`http://localhost:4000/api/applications/${applicationId}/cancel`, {
+    const response = await fetch(`/api/applications/${applicationId}/cancel`, {
       method: "DELETE",
       credentials: "include",
     });

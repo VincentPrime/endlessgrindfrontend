@@ -8,7 +8,6 @@ import {
 } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/adminsidebar/app-sidebar"
 import { useIsMobile } from "@/hooks/use-mobile"
-import Image from "next/image"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import Swal from "sweetalert2"
@@ -37,7 +36,7 @@ export default function Users() {
   const fetchAllUsers = async () => {
     setLoading(true)
     try {
-      const res = await axios.get("http://localhost:4000/api/auth/allUsers", {
+      const res = await axios.get("/api/auth/allUsers", {
         withCredentials: true,
       })
       setUsers(res.data)
@@ -63,7 +62,7 @@ export default function Users() {
 
     if (result.isConfirmed) {
       try {
-        await axios.delete(`http://localhost:4000/api/auth/delete/${id}`, {
+        await axios.delete(`/api/auth/delete/${id}`, {
           withCredentials: true,
         });
 

@@ -38,7 +38,7 @@ export default function Coaches() {
   const fetchCoaches = async () => {
     setLoading(true)
     try {
-      const res = await axios.get("http://localhost:4000/api/coaches/all", {
+      const res = await axios.get("/api/coaches/all", {
         withCredentials: true,
       })
 
@@ -66,7 +66,7 @@ export default function Coaches() {
 
     if (result.isConfirmed) {
       try {
-        await axios.delete(`http://localhost:4000/api/coaches/delete/${id}`, {
+        await axios.delete(`/api/coaches/delete/${id}`, {
           withCredentials: true,
         });
 

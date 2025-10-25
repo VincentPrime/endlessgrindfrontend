@@ -6,7 +6,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Icon } from "@iconify-icon/react";
 import Footer from "@/components/Footer/footer";
 import emailjs from "emailjs-com";
 import { useState } from "react";

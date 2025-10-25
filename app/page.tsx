@@ -41,7 +41,7 @@ export default function Home() {
 
   const fetchPackages = async () => {
     try {
-      const response = await fetch('http://localhost:4000/api/getpackages');
+      const response = await fetch('/api/getpackages');
       if (response.ok) {
         const data = await response.json();
         // Limit to 3 packages for home page

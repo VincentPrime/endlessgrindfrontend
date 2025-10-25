@@ -87,7 +87,7 @@ export function AddCoaches() {
         performance_rating: parseFloat(formData.performance_rating) || 0.0,
       };
 
-      const res = await axios.post("http://localhost:4000/api/coaches/signup", payload, {
+      const res = await axios.post("/api/coaches/signup", payload, {
         withCredentials: true,
       });
 

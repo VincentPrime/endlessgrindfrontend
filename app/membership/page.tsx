@@ -29,7 +29,7 @@ export default function Membership(){
 
     const fetchPackages = async () => {
       try {
-        const response = await fetch('http://localhost:4000/api/getpackages')
+        const response = await fetch('/api/getpackages')
         if (response.ok) {
           const data = await response.json()
           setPackages(data)
@@ -53,6 +53,7 @@ export default function Membership(){
         })
       }
     }
+    
     if (isMobile === undefined) {
       return (
         <header className="sticky top-0 z-50 bg-black flex items-center justify-between px-6 py-3">

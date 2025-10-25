@@ -20,7 +20,7 @@ export default function RouteGuard({ children, allowedRoles }: RouteGuardProps) 
     const checkAuth = async () => {
       try {
         // Verify session with backend
-        const response = await axios.get("http://localhost:4000/api/auth/session", {
+        const response = await axios.get("/api/auth/session", {
           withCredentials: true,
         });
 

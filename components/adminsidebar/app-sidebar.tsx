@@ -4,14 +4,8 @@ import * as React from "react"
 import {
   Sidebar,
   SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarRail,
+
 } from "@/components/ui/sidebar"
 import Image from "next/image"
 import { Icon } from "@iconify-icon/react"
@@ -37,7 +31,7 @@ export function AppSidebar() {
   ]
   const handleLogout = async () => {
     try {
-      const res = await axios.post("http://localhost:4000/api/auth/logout", { withCredentials: true });
+      const res = await axios.post("/api/auth/logout", { withCredentials: true });
 
       if (res.status === 200) {
         logout();

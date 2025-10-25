@@ -29,7 +29,7 @@ export default function PackagePage() {
   const fetchPackages = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:4000/api/getpackages");
+      const res = await axios.get("/api/getpackages");
       setPackages(res.data);
     } catch (err) {
       console.error("Error fetching packages:", err);
@@ -55,7 +55,7 @@ export default function PackagePage() {
 
     if (result.isConfirmed) {
       try {
-        await axios.delete(`http://localhost:4000/api/deletepack/${id}`);
+        await axios.delete(`/api/deletepack/${id}`);
 
         // Update UI
         setPackages((prev) => prev.filter((pkg) => pkg.package_id !== id));

@@ -73,7 +73,7 @@ export function AddPackage({ onPackageAdded }: AddPackageProps) {
       const publicUrl = data.publicUrl;
 
       // 📤 Send to backend
-      const res = await axios.post("http://localhost:4000/api/create", {
+      const res = await axios.post("/api/create", {
         title: form.title,
         description: form.description,
         price: parseFloat(form.price),

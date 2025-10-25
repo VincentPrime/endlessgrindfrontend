@@ -6,7 +6,6 @@ import {
 } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/adminsidebar/app-sidebar"
 import { useIsMobile } from "@/hooks/use-mobile"
-import Image from "next/image"
 import RouteGuard from "@/components/protectedRoute/protectedRoutes"
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar } from 'recharts'
 import { Users, UserCheck, Package, } from 'lucide-react'
@@ -52,7 +51,7 @@ export default function Dashboard() {
       // This sends the session cookie automatically
       
       // Fetch stats
-      const statsRes = await fetch('http://localhost:4000/api/stats', {
+      const statsRes = await fetch('/api/stats', {
         method: 'GET',
         credentials: 'include', // ⭐ This is crucial for session cookies!
         headers: {
@@ -61,7 +60,7 @@ export default function Dashboard() {
       })
       
       // Fetch revenue data
-      const revenueRes = await fetch('http://localhost:4000/api/revenue', {
+      const revenueRes = await fetch('/api/revenue', {
         method: 'GET',
         credentials: 'include', // ⭐ This is crucial for session cookies!
         headers: {

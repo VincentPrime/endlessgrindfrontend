@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react';
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { UserSidebar } from "@/components/userssidebar/user-sidebar";
 import { useIsMobile } from "@/hooks/use-mobile";
-import Image from "next/image";
 import { Usermobilesidebar } from '@/components/userssidebar/usermobilesidebar';
 
 interface Schedule {
@@ -39,7 +38,7 @@ export default function MySchedule() {
 
   const fetchSchedule = async () => {
     try {
-      const response = await fetch('http://localhost:4000/api/user/my-schedule', {
+      const response = await fetch('/api/user/my-schedule', {
         credentials: 'include'
       });
       

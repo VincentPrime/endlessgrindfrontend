@@ -34,7 +34,7 @@ export function Usermobilesidebar() {
   const handleLogout = async () => {
     try {
       const res = await axios.post(
-        "http://localhost:4000/api/auth/logout",
+        "/api/auth/logout",
         {},
         { withCredentials: true }
       );

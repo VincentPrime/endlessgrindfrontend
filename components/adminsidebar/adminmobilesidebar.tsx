@@ -54,7 +54,7 @@ export function Adminmobilesidebar() {
 
   const handleLogout = async () => {
     try {
-      const res = await axios.post("http://localhost:4000/api/auth/logout", {
+      const res = await axios.post("/api/auth/logout", {
         withCredentials: true,
       });
 

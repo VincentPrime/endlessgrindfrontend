@@ -10,7 +10,6 @@ import Header from "@/components/Header/header";
 import Footer from "@/components/Footer/footer";
 import { Separator } from "@radix-ui/react-separator";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Icon } from "@iconify-icon/react";
 import Swal from "sweetalert2";
 import { Sideheader } from "@/components/sideheader/sideheader";
 
@@ -48,7 +47,7 @@ export default function Signup() {
         height: formData.height || null,
       };
 
-      const res = await axios.post("http://localhost:4000/api/auth/signup", payload, {
+      const res = await axios.post("/api/auth/signup", payload, {
         withCredentials: true,
       });
 
@@ -78,6 +77,20 @@ export default function Signup() {
       setLoading(false);
     }
   };
+
+    if (isMobile === undefined) {
+    return (
+      <header className="sticky top-0 z-50 bg-black flex items-center justify-between px-6 py-3">
+        <div className="flex items-center gap-3">
+          <div className="relative h-12 w-12 overflow-hidden rounded-full">
+            <Image src="/icon.png" alt="Logo" fill className="object-cover" />
+          </div>
+          <h1 className="text-lg text-white font-bold">Endless Grind</h1>
+        </div>
+      </header>
+    )
+  }
+  
 
   return (
     <div className="min-h-screen flex flex-col">

@@ -80,7 +80,7 @@ export default function Setting(){
       if (profileImage) formDataToSend.append("profileImage", profileImage);
 
       const res = await axios.put(
-        "http://localhost:4000/api/auth/update-profile",
+        "/api/auth/update-profile",
         formDataToSend,
         {
           withCredentials: true,

@@ -47,7 +47,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const checkSession = async () => {
       try {
-        const response = await axios.get("http://localhost:4000/api/auth/session", {
+        const response = await axios.get("/api/auth/session", {
           withCredentials: true,
         });
         if (response.data.loggedIn) {
@@ -72,7 +72,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const logout = async () => {
     try {
       await axios.post(
-        "http://localhost:4000/api/auth/logout",
+        "/api/auth/logout",
         {},
         { withCredentials: true }
       );

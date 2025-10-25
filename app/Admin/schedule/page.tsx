@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react';
 import { AppSidebar } from "@/components/adminsidebar/app-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { useIsMobile } from "@/hooks/use-mobile";
-import Image from "next/image";
 import { Adminmobilesidebar } from '@/components/adminsidebar/adminmobilesidebar';
 
 interface Schedule {
@@ -42,7 +41,7 @@ export default function AdminSchedule() {
 
   const fetchSchedules = async () => {
     try {
-      const response = await fetch('http://localhost:4000/api/admin/all-schedules', {
+      const response = await fetch('/api/admin/all-schedules', {
         credentials: 'include'
       });
       
@@ -62,7 +61,7 @@ export default function AdminSchedule() {
     setLoadingSessions(true);
     try {
       const response = await fetch(
-        `http://localhost:4000/api/training/sessions/${applicationId}`,
+        `/api/training/sessions/${applicationId}`,
         { credentials: 'include' }
       );
       

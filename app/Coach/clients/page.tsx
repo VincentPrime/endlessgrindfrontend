@@ -2,10 +2,8 @@
 import { useState, useEffect } from 'react';
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { useIsMobile } from "@/hooks/use-mobile";
-import Image from "next/image";
 import { CoachSidebar } from '@/components/coachsidebar/coach-sidebar';
 import Swal from 'sweetalert2';
-import { Icon } from '@iconify-icon/react';
 import { Coachmobilesidebar } from '@/components/coachsidebar/coachmobilesidebar';
 
 interface Client {
@@ -41,7 +39,7 @@ export default function CoachClients() {
 
   const fetchClients = async () => {
     try {
-      const response = await fetch('http://localhost:4000/api/coach/my-clients', {
+      const response = await fetch('/api/coach/my-clients', {
         credentials: 'include'
       });
       
@@ -79,7 +77,7 @@ export default function CoachClients() {
     setSubmitting(true);
     try {
       const response = await fetch(
-        `http://localhost:4000/api/training/log-session/${selectedClient.application_id}`,
+        `/api/training/log-session/${selectedClient.application_id}`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -119,7 +117,7 @@ const handleCompleteProgram = async (applicationId: number, clientName: string) 
   if (!result.isConfirmed) return;
 
   try {
-    const response = await fetch(`http://localhost:4000/api/training/complete/${applicationId}`, {
+    const response = await fetch(`/api/training/complete/${applicationId}`, {
       method: "PUT",
       credentials: "include",
     });

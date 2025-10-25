@@ -1,5 +1,3 @@
-// File: app/Coach/Coachsettings/page.tsx
-
 "use client"
 import { useState, useEffect } from "react"
 import {
@@ -124,7 +122,7 @@ export default function CoachSettings() {
 
     // Send update request
     const res = await axios.put(
-      `http://localhost:4000/api/coaches/update/${(user as any)?.user_id}`,
+      `/api/coaches/update/${(user as any)?.user_id}`,
       payload,
       { withCredentials: true }
     )
