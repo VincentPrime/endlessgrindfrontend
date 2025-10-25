@@ -18,6 +18,9 @@ interface GymMapProps {
   className?: string;
 }
 
+// ✅ Move GYM_LOCATION outside the component so it's not recreated on every render
+const GYM_LOCATION: [number, number] = [14.3294, 120.9636];
+
 export default function GymMap({ className = '' }: GymMapProps) {
   const mapRef = useRef<L.Map | null>(null);
   const mapContainerRef = useRef<HTMLDivElement>(null);
@@ -27,9 +30,6 @@ export default function GymMap({ className = '' }: GymMapProps) {
   const isMapReadyRef = useRef(false);
   const [distance, setDistance] = useState<string>('');
   const [error, setError] = useState<string>('');
-
-  // Gym location coordinates
-  const GYM_LOCATION: [number, number] = [14.3294, 120.9636];
 
   useEffect(() => {
     if (!mapContainerRef.current || mapRef.current) return;
@@ -268,7 +268,7 @@ export default function GymMap({ className = '' }: GymMapProps) {
         style.remove();
       }
     };
-  }, [GYM_LOCATION]);
+  }, []); // ✅ Empty dependency array since GYM_LOCATION is now constant
 
   return (
     <div className={`relative ${className}`}>

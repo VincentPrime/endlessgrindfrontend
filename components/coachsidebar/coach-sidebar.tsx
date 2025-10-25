@@ -12,6 +12,7 @@ import { Separator } from "../ui/separator";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { useUser, isCoach as isCoachUser, isRegularUser } from "@/context/AuthContext";
 import axios, { AxiosError } from "axios";
 

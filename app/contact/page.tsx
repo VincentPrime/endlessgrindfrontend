@@ -10,11 +10,7 @@ import Footer from "@/components/Footer/footer";
 import emailjs from "emailjs-com";
 import { useState } from "react";
 import { Sideheader } from "@/components/sideheader/sideheader";
-import { AxiosError } from "axios";
 
-interface ErrorResponse {
-  message?: string;
-}
 
 export default function Contact() {
   const isMobile = useIsMobile();
