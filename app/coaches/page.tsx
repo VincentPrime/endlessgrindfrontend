@@ -62,6 +62,19 @@ export default function Coaches(){
       setIsDialogOpen(true)
     }
 
+    if (isMobile === undefined) {
+      return (
+        <header className="sticky top-0 z-50 bg-black flex items-center justify-between px-6 py-3">
+          <div className="flex items-center gap-3">
+            <div className="relative h-12 w-12 overflow-hidden rounded-full">
+              <Image src="/icon.png" alt="Logo" fill className="object-cover" />
+            </div>
+            <h1 className="text-lg text-white font-bold">Endless Grind</h1>
+          </div>
+        </header>
+      )
+    }
+
     return(
 <div className="min-h-screen flex flex-col">
             {isMobile ? (
