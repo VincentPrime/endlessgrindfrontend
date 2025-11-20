@@ -34,8 +34,19 @@ export default function GymMap({ className = '' }: GymMapProps) {
   useEffect(() => {
     if (!mapContainerRef.current || mapRef.current) return;
 
-    // Initialize map
-    const map = L.map(mapContainerRef.current).setView(GYM_LOCATION, 13);
+    // Define Philippines bounds (approximate)
+    const philippinesBounds = L.latLngBounds(
+      L.latLng(4.5, 116.0),  // Southwest corner
+      L.latLng(21.0, 127.0)  // Northeast corner
+    );
+
+    // Initialize map with restrictions
+    const map = L.map(mapContainerRef.current, {
+      maxBounds: philippinesBounds,
+      maxBoundsViscosity: 1.0, // Makes bounds completely solid
+      minZoom: 6,  // Minimum zoom shows all of Philippines
+      maxZoom: 18, // Maximum zoom for detailed view
+    }).setView(GYM_LOCATION, 13);
     mapRef.current = map;
 
     // Wait for map to be fully ready
@@ -46,7 +57,7 @@ export default function GymMap({ className = '' }: GymMapProps) {
     // Add OpenStreetMap tiles
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '© OpenStreetMap contributors',
-      maxZoom: 19,
+      maxZoom: 18,
     }).addTo(map);
 
     // Custom gym icon
