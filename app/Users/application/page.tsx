@@ -245,7 +245,7 @@ export default function ApplicationForm(){
           if (data.payment_url) {
             alert(`Application submitted! Opening payment page (₱${data.amount})`);
             window.location.href = data.payment_url;
-            window.location.reload();
+            
           } else {
             alert('Application submitted successfully! Please wait for admin approval.');
             router.push('/user/dashboard');
