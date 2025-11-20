@@ -255,10 +255,10 @@ export default function ApplicationForm(){
             }
             
             // Stay on current page or redirect to dashboard
-            router.push('/user/dashboard');
+            router.push('/Users/application');
           } else {
             alert('Application submitted successfully! Please wait for admin approval.');
-            router.push('/user/dashboard');
+            router.push('/Users/application');
           }
         } else {
           alert(data.message || 'Failed to submit application');
