@@ -241,11 +241,21 @@ export default function ApplicationForm(){
   
         const data = await response.json();
   
-        if (data.success) {
+       if (data.success) {
           if (data.payment_url) {
-            alert(`Application submitted! Opening payment page (₱${data.amount})`);
-            window.location.href = data.payment_url;
+            // Open payment in new tab
+            const paymentWindow = window.open(data.payment_url, '_blank');
             
+            // Check if popup was blocked
+            if (!paymentWindow || paymentWindow.closed || typeof paymentWindow.closed == 'undefined') {
+              alert('Pop-up blocked! Please allow pop-ups and click the payment link below.');
+              // You could show a fallback link here
+            } else {
+              alert(`Application submitted! Payment page opened in new tab (₱${data.amount})`);
+            }
+            
+            // Stay on current page or redirect to dashboard
+            router.push('/user/dashboard');
           } else {
             alert('Application submitted successfully! Please wait for admin approval.');
             router.push('/user/dashboard');
