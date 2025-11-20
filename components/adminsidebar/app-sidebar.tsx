@@ -28,6 +28,7 @@ export function AppSidebar() {
     { href: "/Admin/schedule", label: "SCHEDULE", icon: "uis:schedule" },
     { href: "/Admin/package", label: "PROMOS/PACKAGE", icon: "mdi:package" },
     { href: "/Admin/applicationnotice", label: "APPLICATION NOTICE", icon: "ri:megaphone-fill" },
+    { href: "/Admin/archive", label: "ARCHIVE", icon: "bxs:trash"  },
   ]
   const handleLogout = async () => {
     try {

@@ -19,6 +19,7 @@ interface Application {
   facebook: string;
   address: string;
   goal: string;
+  id_picture_url: string; // NEW: Added ID picture URL
   weight: number;
   height: number;
   package_id: number;
@@ -118,116 +119,115 @@ export default function ApplicationNotice() {
     }
   };
 
- const handleDecline = async (applicationId: number) => {
-  const result = await Swal.fire({
-    title: "Decline Application?",
-    text: "Are you sure you want to decline this application? Payment will be refunded if completed.",
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonColor: "#d33",
-    cancelButtonColor: "#3085d6",
-    confirmButtonText: "Yes, decline it!",
-  });
-
-  if (!result.isConfirmed) return;
-
-  setActionLoading(true);
-  try {
-    const response = await fetch(`/api/applications/${applicationId}/decline`, {
-      method: "PUT",
-      credentials: "include",
+  const handleDecline = async (applicationId: number) => {
+    const result = await Swal.fire({
+      title: "Decline Application?",
+      text: "Are you sure you want to decline this application? Payment will be refunded if completed.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, decline it!",
     });
 
-    const data = await response.json();
+    if (!result.isConfirmed) return;
 
-    if (data.success) {
-      await Swal.fire({
-        title: "Declined!",
-        text: data.refund_initiated
-          ? "Application declined and refund has been initiated."
-          : "Application declined successfully.",
-        icon: "success",
-        timer: 2000,
-        showConfirmButton: false,
+    setActionLoading(true);
+    try {
+      const response = await fetch(`/api/applications/${applicationId}/decline`, {
+        method: "PUT",
+        credentials: "include",
       });
 
-      fetchApplications();
-      setSelectedApp(null);
-    } else {
+      const data = await response.json();
+
+      if (data.success) {
+        await Swal.fire({
+          title: "Declined!",
+          text: data.refund_initiated
+            ? "Application declined and refund has been initiated."
+            : "Application declined successfully.",
+          icon: "success",
+          timer: 2000,
+          showConfirmButton: false,
+        });
+
+        fetchApplications();
+        setSelectedApp(null);
+      } else {
+        Swal.fire({
+          title: "Error!",
+          text: data.message || "Failed to decline application.",
+          icon: "error",
+        });
+      }
+    } catch (error) {
+      console.error("Error declining application:", error);
+
       Swal.fire({
         title: "Error!",
-        text: data.message || "Failed to decline application.",
+        text: "An unexpected error occurred while declining the application.",
         icon: "error",
       });
+    } finally {
+      setActionLoading(false);
     }
-  } catch (error) {
-    console.error("Error declining application:", error);
+  };
 
-    Swal.fire({
-      title: "Error!",
-      text: "An unexpected error occurred while declining the application.",
-      icon: "error",
-    });
-  } finally {
-    setActionLoading(false);
-  }
-};
-
-
-const handleCancel = async (applicationId: number) => {
-  const result = await Swal.fire({
-    title: "Permanently Delete Application?",
-    text: "Are you sure you want to PERMANENTLY DELETE this application? This action cannot be undone. Payment will be refunded if completed.",
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonColor: "#d33",
-    cancelButtonColor: "#3085d6",
-    confirmButtonText: "Yes, delete it permanently!",
-  });
-
-  if (!result.isConfirmed) return;
-
-  setActionLoading(true);
-  try {
-    const response = await fetch(`/api/applications/${applicationId}/cancel`, {
-      method: "DELETE",
-      credentials: "include",
+  const handleArchive = async (applicationId: number) => {
+    const result = await Swal.fire({
+      title: "Archive Application?",
+      text: "This will move the application to archive and cancel any active membership. The user will be able to apply again.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, archive it!",
     });
 
-    const data = await response.json();
+    if (!result.isConfirmed) return;
 
-    if (data.success) {
-      await Swal.fire({
-        title: "Deleted!",
-        text: data.refund_initiated
-          ? "Application deleted and refund has been initiated."
-          : "Application deleted successfully.",
-        icon: "success",
-        timer: 2000,
-        showConfirmButton: false,
+    setActionLoading(true);
+    try {
+      const response = await fetch(`/api/applications/${applicationId}/archive`, {
+        method: "PUT",
+        credentials: "include",
       });
 
-      fetchApplications();
-      setSelectedApp(null);
-    } else {
+      const data = await response.json();
+
+      if (data.success) {
+        await Swal.fire({
+          title: "Archived!",
+          text: data.membership_cancelled
+            ? "Application archived and membership cancelled."
+            : "Application archived successfully.",
+          icon: "success",
+          timer: 2000,
+          showConfirmButton: false,
+        });
+
+        fetchApplications();
+        setSelectedApp(null);
+      } else {
+        Swal.fire({
+          title: "Error!",
+          text: data.message || "Failed to archive application.",
+          icon: "error",
+        });
+      }
+    } catch (error) {
+      console.error("Error archiving application:", error);
+
       Swal.fire({
         title: "Error!",
-        text: data.message || "Failed to delete application.",
+        text: "An unexpected error occurred while archiving the application.",
         icon: "error",
       });
+    } finally {
+      setActionLoading(false);
     }
-  } catch (error) {
-    console.error("Error cancelling application:", error);
-
-    Swal.fire({
-      title: "Error!",
-      text: "An unexpected error occurred while deleting the application.",
-      icon: "error",
-    });
-  } finally {
-    setActionLoading(false);
-  }
-};
+  };
 
   const filteredApplications = applications.filter(app => {
     if (filter === 'all') return true;
@@ -344,7 +344,7 @@ const handleCancel = async (applicationId: number) => {
                       View Details
                     </button>
                     
-                    {/* Show buttons for ALL pending applications - Admin decides! */}
+                    {/* Pending applications */}
                     {app.application_status === 'pending' && (
                       <>
                         <button
@@ -362,19 +362,20 @@ const handleCancel = async (applicationId: number) => {
                           Decline {app.payment_status === 'completed' ? '& Refund' : ''}
                         </button>
                         <button
-                          onClick={() => handleCancel(app.application_id)}
+                          onClick={() => handleArchive(app.application_id)}
                           disabled={actionLoading}
-                          className="px-4 py-2 text-sm bg-gray-700 text-white hover:bg-gray-800 rounded-md transition-colors disabled:bg-gray-400 flex items-center gap-1"
+                          className="px-4 py-2 text-sm bg-orange-600 text-white hover:bg-orange-700 rounded-md transition-colors disabled:bg-gray-400 flex items-center gap-1"
                         >
                           <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+                            <path d="M4 3a2 2 0 100 4h12a2 2 0 100-4H4z" />
+                            <path fillRule="evenodd" d="M3 8h14v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8zm5 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" clipRule="evenodd" />
                           </svg>
-                          Cancel
+                          Archive
                         </button>
                       </>
                     )}
 
-                    {/* Approved applications - also allow cancellation */}
+                    {/* Approved applications */}
                     {app.application_status === 'approved' && (
                       <>
                         <span className="px-4 py-2 text-sm text-green-600 bg-green-50 rounded-md flex items-center gap-2">
@@ -384,19 +385,20 @@ const handleCancel = async (applicationId: number) => {
                           Approved on {app.reviewed_at ? new Date(app.reviewed_at).toLocaleDateString() : 'N/A'}
                         </span>
                         <button
-                          onClick={() => handleCancel(app.application_id)}
+                          onClick={() => handleArchive(app.application_id)}
                           disabled={actionLoading}
-                          className="px-4 py-2 text-sm bg-gray-700 text-white hover:bg-gray-800 rounded-md transition-colors disabled:bg-gray-400 flex items-center gap-1"
+                          className="px-4 py-2 text-sm bg-orange-600 text-white hover:bg-orange-700 rounded-md transition-colors disabled:bg-gray-400 flex items-center gap-1"
                         >
                           <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+                            <path d="M4 3a2 2 0 100 4h12a2 2 0 100-4H4z" />
+                            <path fillRule="evenodd" d="M3 8h14v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8zm5 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" clipRule="evenodd" />
                           </svg>
-                          Delete
+                          Archive
                         </button>
                       </>
                     )}
 
-                    {/* Declined applications - also allow cancellation */}
+                    {/* Declined applications */}
                     {app.application_status === 'declined' && (
                       <>
                         <span className="px-4 py-2 text-sm text-red-600 bg-red-50 rounded-md flex items-center gap-2">
@@ -406,14 +408,15 @@ const handleCancel = async (applicationId: number) => {
                           Declined on {app.reviewed_at ? new Date(app.reviewed_at).toLocaleDateString() : 'N/A'}
                         </span>
                         <button
-                          onClick={() => handleCancel(app.application_id)}
+                          onClick={() => handleArchive(app.application_id)}
                           disabled={actionLoading}
-                          className="px-4 py-2 text-sm bg-gray-700 text-white hover:bg-gray-800 rounded-md transition-colors disabled:bg-gray-400 flex items-center gap-1"
+                          className="px-4 py-2 text-sm bg-orange-600 text-white hover:bg-orange-700 rounded-md transition-colors disabled:bg-gray-400 flex items-center gap-1"
                         >
                           <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+                            <path d="M4 3a2 2 0 100 4h12a2 2 0 100-4H4z" />
+                            <path fillRule="evenodd" d="M3 8h14v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8zm5 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" clipRule="evenodd" />
                           </svg>
-                          Delete
+                          Archive
                         </button>
                       </>
                     )}
@@ -448,6 +451,35 @@ const handleCancel = async (applicationId: number) => {
                     Payment: {selectedApp.payment_status}
                   </span>
                 </div>
+
+                {/* NEW: ID Picture Display */}
+                {selectedApp.id_picture_url && (
+                  <div className="pb-4 border-b">
+                    <p className="text-sm font-medium text-gray-700 mb-3">ID Picture for Verification</p>
+                    <div className="relative w-full max-w-md mx-auto">
+                      <img
+                        src={selectedApp.id_picture_url}
+                        alt="ID Verification"
+                        className="w-full h-auto rounded-lg border-2 border-gray-300 shadow-sm hover:shadow-md transition-shadow"
+                        onError={(e) => {
+                          e.currentTarget.src = '/placeholder-id.png'; // Fallback image
+                          e.currentTarget.alt = 'ID image not available';
+                        }}
+                      />
+                      <a
+                        href={selectedApp.id_picture_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-2 inline-flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>
+                        Open full size
+                      </a>
+                    </div>
+                  </div>
+                )}
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
@@ -533,27 +565,28 @@ const handleCancel = async (applicationId: number) => {
                       {actionLoading ? 'Processing...' : `Decline${selectedApp.payment_status === 'completed' ? ' & Refund' : ''}`}
                     </button>
                     <button
-                      onClick={() => handleCancel(selectedApp.application_id)}
+                      onClick={() => handleArchive(selectedApp.application_id)}
                       disabled={actionLoading}
-                      className="flex-1 bg-gray-700 text-white py-3 rounded-md hover:bg-gray-800 disabled:bg-gray-400"
+                      className="flex-1 bg-orange-600 text-white py-3 rounded-md hover:bg-orange-700 disabled:bg-gray-400"
                     >
-                      {actionLoading ? 'Processing...' : 'Cancel'}
+                      {actionLoading ? 'Processing...' : 'Archive'}
                     </button>
                   </div>
                 )}
 
-                {/* Delete button for approved/declined applications */}
+                {/* Archive button for approved/declined applications */}
                 {(selectedApp.application_status === 'approved' || selectedApp.application_status === 'declined') && (
                   <div className="pt-4">
                     <button
-                      onClick={() => handleCancel(selectedApp.application_id)}
+                      onClick={() => handleArchive(selectedApp.application_id)}
                       disabled={actionLoading}
-                      className="w-full bg-gray-700 text-white py-3 rounded-md hover:bg-gray-800 disabled:bg-gray-400 flex items-center justify-center gap-2"
+                      className="w-full bg-orange-600 text-white py-3 rounded-md hover:bg-orange-700 disabled:bg-gray-400 flex items-center justify-center gap-2"
                     >
                       <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+                        <path d="M4 3a2 2 0 100 4h12a2 2 0 100-4H4z" />
+                        <path fillRule="evenodd" d="M3 8h14v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8zm5 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" clipRule="evenodd" />
                       </svg>
-                      {actionLoading ? 'Deleting...' : 'Delete Application'}
+                      {actionLoading ? 'Archiving...' : 'Archive Application'}
                     </button>
                   </div>
                 )}

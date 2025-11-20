@@ -26,9 +26,9 @@ interface CoachUser {
   email: string;
   role: "coach";
   profile_image?: string;
-  specialty?: string;  // ✅ Added
-  years_of_experience?: number;  // ✅ Added
-  availability?: string;  // ✅ Added
+  specialty?: string; 
+  years_of_experience?: number;  
+  availability?: string;  
 }
 
 // ✅ Union type for User

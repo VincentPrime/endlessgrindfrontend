@@ -18,8 +18,8 @@ interface GymMapProps {
   className?: string;
 }
 
-// ✅ Move GYM_LOCATION outside the component so it's not recreated on every render
-const GYM_LOCATION: [number, number] = [14.3294, 120.9636];
+// ✅ Updated gym location to 8WRQ+G4 Dasmariñas, Cavite
+const GYM_LOCATION: [number, number] = [14.3412, 120.9380];
 
 export default function GymMap({ className = '' }: GymMapProps) {
   const mapRef = useRef<L.Map | null>(null);
@@ -72,9 +72,9 @@ export default function GymMap({ className = '' }: GymMapProps) {
       .bindPopup(`
         <div style="text-align: center;">
           <h3 style="margin: 0 0 8px 0; color: #f59e0b; font-weight: bold;">Endless Grind Gym</h3>
-          <p style="margin: 0; font-size: 12px;">9015 @ Gen. Emilio Aguinaldo Highway<br/>
-          Arcontica Subdivision Salitran 2<br/>
-          Dasmariñas, Philippines</p>
+          <p style="margin: 0; font-size: 12px;">8WRQ+G4<br/>
+          Dasmariñas, Cavite<br/>
+          Philippines</p>
         </div>
       `);
 
@@ -150,7 +150,7 @@ export default function GymMap({ className = '' }: GymMapProps) {
                   fitSelectedRoutes: true,
                   showAlternatives: false,
                   lineOptions: {
-                    styles: [{ color: '#f59e0b', weight: 5, opacity: 0.7 }]
+                    styles: [{ color: '#f50b2a', weight: 5, opacity: 0.7 }]
                   },
                   createMarker: () => null,
                 });
@@ -268,7 +268,7 @@ export default function GymMap({ className = '' }: GymMapProps) {
         style.remove();
       }
     };
-  }, []); // ✅ Empty dependency array since GYM_LOCATION is now constant
+  }, []);
 
   return (
     <div className={`relative ${className}`}>
@@ -276,12 +276,12 @@ export default function GymMap({ className = '' }: GymMapProps) {
       
       {/* Info overlay */}
       <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-sm rounded-lg shadow-lg p-4 max-w-xs z-[1000]">
-        <h3 className="font-bold text-lg text-amber-500 mb-2">📍 Find Us</h3>
+        <h3 className="font-bold text-lg text-red-500 mb-2">📍 Find Us</h3>
         <p className="text-sm text-gray-700 mb-2">
           <strong>Endless Grind Gym</strong><br />
-          9015 @ Gen. Emilio Aguinaldo Highway<br />
-          Arcontica Subdivision Salitran 2<br />
-          Dasmariñas, Philippines
+          8WRQ+G4<br />
+          Dasmariñas, Cavite<br />
+          Philippines
         </p>
         {distance && (
           <div className="mt-3 pt-3 border-t border-gray-200">
@@ -298,7 +298,7 @@ export default function GymMap({ className = '' }: GymMapProps) {
       {/* Legend */}
       <div className="absolute bottom-4 right-4 bg-white/95 backdrop-blur-sm rounded-lg shadow-lg p-3 z-[1000]">
         <div className="flex items-center gap-2 mb-2">
-          <div className="w-4 h-4 bg-amber-500 rounded-full"></div>
+          <div className="w-4 h-4 bg-red-500 rounded-full"></div>
           <span className="text-xs font-medium">Gym Location</span>
         </div>
         <div className="flex items-center gap-2">

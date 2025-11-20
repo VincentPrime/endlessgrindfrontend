@@ -4,6 +4,8 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { UserSidebar } from "@/components/userssidebar/user-sidebar";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Usermobilesidebar } from '@/components/userssidebar/usermobilesidebar';
+import { BookingCalendar } from '@/components/booking/bookingcalendar';
+import { UserBookings } from '@/components/booking/UserBookings';
 
 interface Schedule {
   application_id: number;
@@ -12,6 +14,7 @@ interface Schedule {
   submitted_at: string;
   package_title: string;
   package_description: string;
+  coach_id: number;
   coach_name: string;
   coach_availability: string;
   total_sessions: number;
@@ -31,6 +34,8 @@ export default function MySchedule() {
   const [sessions, setSessions] = useState<Session[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [showBookingModal, setShowBookingModal] = useState(false);
+  const [activeTab, setActiveTab] = useState<'schedule' | 'bookings'>('schedule');
 
   useEffect(() => {
     fetchSchedule();
@@ -59,14 +64,6 @@ export default function MySchedule() {
     }
   };
   
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const calculateBMI = (weight: number, height: number) => {
-    if (!weight || !height) return 'N/A';
-    const heightInMeters = height / 100;
-    const bmi = weight / (heightInMeters * heightInMeters);
-    return bmi.toFixed(1);
-  };
-
   const getStatusBadge = (status: string) => {
     const badges: Record<string, string> = {
       not_started: 'bg-blue-100 text-blue-800',
@@ -98,7 +95,7 @@ export default function MySchedule() {
         <div className="p-6">
           <div className="mb-6">
             <h1 className="text-4xl font-bold text-gray-900 mb-2">My Training Schedule</h1>
-            <p className="text-gray-600">View your current training program and session history</p>
+            <p className="text-gray-600">View your program, book sessions, and track progress</p>
           </div>
 
           {loading ? (
@@ -116,135 +113,202 @@ export default function MySchedule() {
             </div>
           ) : schedule ? (
             <div className="space-y-6">
-              {/* Current Program Card */}
-              <div className="bg-white rounded-lg shadow-md p-6">
-                <div className="flex justify-between items-start mb-4">
-                  <div>
-                    <h2 className="text-2xl font-bold text-gray-900">{schedule.package_title}</h2>
-                    <p className="text-sm text-gray-600">{schedule.package_description}</p>
-                  </div>
-                  <span className={`px-4 py-2 rounded-full text-sm font-medium ${getStatusBadge(schedule.training_status)}`}>
-                    {getStatusText(schedule.training_status)}
-                  </span>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-                  <div className="bg-blue-50 rounded-lg p-4">
-                    <p className="text-xs text-blue-600 font-medium mb-1">YOUR NAME</p>
-                    <p className="text-lg font-bold text-gray-900">{schedule.user_name}</p>
-                  </div>
-
-                  <div className="bg-green-50 rounded-lg p-4">
-                    <p className="text-xs text-green-600 font-medium mb-1">YOUR COACH</p>
-                    <p className="text-lg font-bold text-gray-900">{schedule.coach_name}</p>
-                  </div>
-
-                  <div className="bg-purple-50 rounded-lg p-4">
-                    <p className="text-xs text-purple-600 font-medium mb-1">COACH AVAILABILITY</p>
-                    <p className="text-lg font-bold text-gray-900">{schedule.coach_availability || 'Check with coach'}</p>
-                  </div>
-                </div>
-
-                <div className="mt-6 pt-6 border-t">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm text-gray-600">Total Sessions Completed</p>
-                      <p className="text-3xl font-bold text-blue-600">{schedule.total_sessions}</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm text-gray-600">Started On</p>
-                      <p className="text-lg font-semibold text-gray-900">
-                        {new Date(schedule.submitted_at).toLocaleDateString('en-US', {
-                          year: 'numeric',
-                          month: 'long',
-                          day: 'numeric'
-                        })}
-                      </p>
-                    </div>
-                  </div>
-                </div>
+              {/* Tabs */}
+              <div className="flex gap-4 border-b border-gray-200">
+                <button
+                  onClick={() => setActiveTab('schedule')}
+                  className={`px-6 py-3 font-semibold transition-colors ${
+                    activeTab === 'schedule'
+                      ? 'text-blue-600 border-b-2 border-blue-600'
+                      : 'text-gray-600 hover:text-gray-900'
+                  }`}
+                >
+                  Training Program
+                </button>
+                <button
+                  onClick={() => setActiveTab('bookings')}
+                  className={`px-6 py-3 font-semibold transition-colors ${
+                    activeTab === 'bookings'
+                      ? 'text-blue-600 border-b-2 border-blue-600'
+                      : 'text-gray-600 hover:text-gray-900'
+                  }`}
+                >
+                  My Bookings
+                </button>
               </div>
 
-              {/* Session History */}
-              <div className="bg-white rounded-lg shadow-md p-6">
-                <h3 className="text-xl font-bold text-gray-900 mb-4">Session History</h3>
-                
-                {sessions.length === 0 ? (
-                  <div className="text-center py-8 text-gray-500">
-                    <div className="text-4xl mb-2">📅</div>
-                    <p>No sessions logged yet. Your coach will log sessions after each training day.</p>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    {sessions.map((session, index) => (
-                      <div key={session.session_id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-                        <div className="flex justify-between items-start mb-2">
-                          <div>
-                            <p className="font-bold text-gray-900">
-                              Session #{sessions.length - index}
-                            </p>
-                            <p className="text-sm text-gray-600">
-                              {new Date(session.session_date).toLocaleDateString('en-US', {
-                                weekday: 'long',
-                                year: 'numeric',
-                                month: 'long',
-                                day: 'numeric'
-                              })}
-                            </p>
-                          </div>
-                          {session.user_weight && (
-                            <div className="text-right">
-                              <p className="text-xs text-gray-500">Weight Recorded</p>
-                              <p className="text-2xl font-bold text-green-600">{session.user_weight} kg</p>
-                            </div>
-                          )}
-                        </div>
-                        
-                        {session.notes && (
-                          <div className="mt-3 pt-3 border-t border-gray-100">
-                            <p className="text-xs text-gray-500 mb-1">Coach Notes:</p>
-                            <p className="text-sm text-gray-700">{session.notes}</p>
-                          </div>
-                        )}
+              {activeTab === 'schedule' && (
+                <>
+                  {/* Current Program Card */}
+                  <div className="bg-white rounded-lg shadow-md p-6">
+                    <div className="flex justify-between items-start mb-4">
+                      <div>
+                        <h2 className="text-2xl font-bold text-gray-900">{schedule.package_title}</h2>
+                        <p className="text-sm text-gray-600">{schedule.package_description}</p>
                       </div>
-                    ))}
-                  </div>
-                )}
-              </div>
+                      <span className={`px-4 py-2 rounded-full text-sm font-medium ${getStatusBadge(schedule.training_status)}`}>
+                        {getStatusText(schedule.training_status)}
+                      </span>
+                    </div>
 
-              {/* Weight Progress Chart (if sessions exist) */}
-              {sessions.length > 0 && sessions.some(s => s.user_weight) && (
-                <div className="bg-white rounded-lg shadow-md p-6">
-                  <h3 className="text-xl font-bold text-gray-900 mb-4">Weight Progress</h3>
-                  <div className="space-y-2">
-                    {sessions.filter(s => s.user_weight).reverse().map((session, index, arr) => {
-                      const weightChange = index > 0 ? session.user_weight - arr[index - 1].user_weight : 0;
-                      return (
-                        <div key={session.session_id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                          <div className="flex-1">
-                            <p className="text-sm font-medium text-gray-900">
-                              {new Date(session.session_date).toLocaleDateString()}
-                            </p>
-                          </div>
-                          <div className="flex items-center gap-4">
-                            <p className="text-lg font-bold text-gray-900">{session.user_weight} kg</p>
-                            {weightChange !== 0 && (
-                              <span className={`text-sm font-medium px-2 py-1 rounded ${
-                                weightChange < 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-                              }`}>
-                                {weightChange > 0 ? '+' : ''}{weightChange.toFixed(1)} kg
-                              </span>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+                      <div className="bg-blue-50 rounded-lg p-4">
+                        <p className="text-xs text-blue-600 font-medium mb-1">YOUR NAME</p>
+                        <p className="text-lg font-bold text-gray-900">{schedule.user_name}</p>
+                      </div>
+
+                      <div className="bg-green-50 rounded-lg p-4">
+                        <p className="text-xs text-green-600 font-medium mb-1">YOUR COACH</p>
+                        <p className="text-lg font-bold text-gray-900">{schedule.coach_name}</p>
+                      </div>
+
+                      <div className="bg-purple-50 rounded-lg p-4">
+                        <p className="text-xs text-purple-600 font-medium mb-1">COACH AVAILABILITY</p>
+                        <p className="text-lg font-bold text-gray-900">{schedule.coach_availability || 'Mon-Sat, 10AM-7PM'}</p>
+                      </div>
+                    </div>
+
+                    <div className="mt-6 pt-6 border-t">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-sm text-gray-600">Total Sessions Completed</p>
+                          <p className="text-3xl font-bold text-blue-600">{schedule.total_sessions}</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-sm text-gray-600">Started On</p>
+                          <p className="text-lg font-semibold text-gray-900">
+                            {new Date(schedule.submitted_at).toLocaleDateString('en-US', {
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric'
+                            })}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Book Session Button */}
+                    <button
+                      onClick={() => setShowBookingModal(true)}
+                      className="mt-6 w-full bg-blue-500 text-white font-bold py-3 rounded-md hover:bg-blue-600 transition-colors"
+                    >
+                      📅 Book Training Session
+                    </button>
+                  </div>
+
+                  {/* Session History */}
+                  <div className="bg-white rounded-lg shadow-md p-6">
+                    <h3 className="text-xl font-bold text-gray-900 mb-4">Session History</h3>
+                    
+                    {sessions.length === 0 ? (
+                      <div className="text-center py-8 text-gray-500">
+                        <div className="text-4xl mb-2">📅</div>
+                        <p>No sessions logged yet. Your coach will log sessions after each training day.</p>
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        {sessions.map((session, index) => (
+                          <div key={session.session_id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                            <div className="flex justify-between items-start mb-2">
+                              <div>
+                                <p className="font-bold text-gray-900">
+                                  Session #{sessions.length - index}
+                                </p>
+                                <p className="text-sm text-gray-600">
+                                  {new Date(session.session_date).toLocaleDateString('en-US', {
+                                    weekday: 'long',
+                                    year: 'numeric',
+                                    month: 'long',
+                                    day: 'numeric'
+                                  })}
+                                </p>
+                              </div>
+                              {session.user_weight && (
+                                <div className="text-right">
+                                  <p className="text-xs text-gray-500">Weight Recorded</p>
+                                  <p className="text-2xl font-bold text-green-600">{session.user_weight} kg</p>
+                                </div>
+                              )}
+                            </div>
+                            
+                            {session.notes && (
+                              <div className="mt-3 pt-3 border-t border-gray-100">
+                                <p className="text-xs text-gray-500 mb-1">Coach Notes:</p>
+                                <p className="text-sm text-gray-700">{session.notes}</p>
+                              </div>
                             )}
                           </div>
-                        </div>
-                      );
-                    })}
+                        ))}
+                      </div>
+                    )}
                   </div>
-                </div>
+
+                  {/* Weight Progress */}
+                  {sessions.length > 0 && sessions.some(s => s.user_weight) && (
+                    <div className="bg-white rounded-lg shadow-md p-6">
+                      <h3 className="text-xl font-bold text-gray-900 mb-4">Weight Progress</h3>
+                      <div className="space-y-2">
+                        {sessions.filter(s => s.user_weight).reverse().map((session, index, arr) => {
+                          const weightChange = index > 0 ? session.user_weight - arr[index - 1].user_weight : 0;
+                          return (
+                            <div key={session.session_id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                              <div className="flex-1">
+                                <p className="text-sm font-medium text-gray-900">
+                                  {new Date(session.session_date).toLocaleDateString()}
+                                </p>
+                              </div>
+                              <div className="flex items-center gap-4">
+                                <p className="text-lg font-bold text-gray-900">{session.user_weight} kg</p>
+                                {weightChange !== 0 && (
+                                  <span className={`text-sm font-medium px-2 py-1 rounded ${
+                                    weightChange < 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                                  }`}>
+                                    {weightChange > 0 ? '+' : ''}{weightChange.toFixed(1)} kg
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
+
+              {activeTab === 'bookings' && (
+                <UserBookings />
               )}
             </div>
           ) : null}
         </div>
+
+        {/* Booking Modal */}
+        {showBookingModal && schedule && (
+          <div className="fixed inset-0 bg-black/70 bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-auto">
+              <div className="sticky top-0 bg-white border-b p-4 flex justify-between items-center">
+                <h2 className="text-xl font-bold text-gray-900">Book Training Session</h2>
+                <button
+                  onClick={() => setShowBookingModal(false)}
+                  className="text-gray-500 hover:text-gray-700 text-2xl"
+                >
+                  ×
+                </button>
+              </div>
+              <div className="p-6">
+                <BookingCalendar
+                  applicationId={schedule.application_id}
+                  coachId={schedule.coach_id} // ✅ CORRECT// You'll need to pass coach_id from backend
+                  onBookingSuccess={() => {
+                    setShowBookingModal(false);
+                    setActiveTab('bookings');
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+        )}
       </SidebarInset>
     </SidebarProvider>
   );

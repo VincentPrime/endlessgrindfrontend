@@ -16,10 +16,11 @@ const nextConfig: NextConfig = {
     return [
       {
         source: '/api/:path*',
-        destination: 'https://endlessgrindbackend-7jdl.onrender.com/api/:path*',
+        destination: 'https://endlessgrindbackend-7jdl.onrender.com/api/:path*' ,
       },
     ]
   },
 }
 
+// 'https://endlessgrindbackend-7jdl.onrender.com/api/:path*'
 export default nextConfig

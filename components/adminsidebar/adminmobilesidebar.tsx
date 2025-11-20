@@ -50,6 +50,11 @@ export function Adminmobilesidebar() {
       label: "APPLICATION NOTICE",
       icon: "ri:megaphone-fill",
     },
+    {
+      href: "/Admin/archive",
+      label: "ARCHIVE",
+      icon: "bxs:trash",
+    },
   ];
 
   const handleLogout = async () => {
