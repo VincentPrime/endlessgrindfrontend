@@ -252,10 +252,11 @@ export default function ApplicationForm(){
               // You could show a fallback link here
             } else {
               alert(`Application submitted! Payment page opened in new tab (₱${data.amount})`);
+              
             }
             
             // Stay on current page or redirect to dashboard
-            router.push('/Users/application');
+            window.location.reload();
           } else {
             alert('Application submitted successfully! Please wait for admin approval.');
             router.push('/Users/application');
