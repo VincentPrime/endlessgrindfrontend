@@ -61,14 +61,26 @@ export default function Login() {
         router.push("/Users/schedule")
       }
     } catch (err: unknown) {
-      const error = err as AxiosError<ErrorResponse>;
-      Swal.fire({
-      text: error.response?.data?.message || "Update failed",
+  const error = err as AxiosError<ErrorResponse & { locked?: boolean; remainingSeconds?: number }>;
+  
+  if (error.response?.data?.locked) {
+    // Account is locked - show special message
+    Swal.fire({
+      title: "Account Locked",
+      text: error.response?.data?.message,
+      icon: "warning",
+      timer: 3000,
+      showConfirmButton: false,
+    });
+  } else {
+    Swal.fire({
+      text: error.response?.data?.message || "Login failed",
       icon: "error",
       timer: 2000,
       showConfirmButton: false,
-  });
-    } finally {
+    });
+  }
+}finally {
       setLoading(false)
     }
   }
