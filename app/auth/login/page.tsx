@@ -129,12 +129,12 @@ export default function Login() {
         </header>
       )}
 
-      <section className="relative flex flex-col items-center justify-center text-white h-[90vh] px-5">
+      <section className="relative flex flex-col items-center text-white min-h-screen px-5 py-20 xl:p-10">
         <div className="absolute inset-0 -z-10">
           <Image src="/pic4.png" alt="Background" fill className="object-cover object-center" priority />
         </div>
 
-        <Card className="py-10 px-10 shadow-none border-none bg-[#1E1E1E]/80">
+        <Card className="py-10 px-10 shadow-none border-none bg-[#1E1E1E]/80 ">
           <Card className="flex justify-center bg-transparent items-center gap-10 border-none shadow-none">
             <div>
               <Image src="/icon.png" alt="" width={100} height={100} />
@@ -158,6 +158,15 @@ export default function Login() {
                 onKeyPress={handleKeyPress}
                 disabled={loading}
               />
+
+              <div className="w-full text-center xl:mt-2">
+                <Link 
+                  href="/auth/forgotpassword" 
+                  className="text-amber-400 hover:underline text-sm"
+                >
+                  Forgot Password?
+                </Link>
+              </div>
             </div>
 
             {error && (
