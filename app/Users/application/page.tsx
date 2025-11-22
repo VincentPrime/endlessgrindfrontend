@@ -81,10 +81,16 @@ export default function ApplicationForm(){
         if (response.ok) {
           const data = await response.json();
           if (data.success && data.application) {
-            setHasExistingApplication(true);
-            setExistingAppStatus(data.application.application_status);
-            setApplicationId(data.application.application_id);
+            // Check if application is not archived (extra safety check)
+            if (!data.application.is_archived) {
+              setHasExistingApplication(true);
+              setExistingAppStatus(data.application.application_status);
+              setApplicationId(data.application.application_id);
+            }
           }
+        } else if (response.status === 404) {
+          // No active application found - user can submit new one
+          setHasExistingApplication(false);
         }
       } catch (error) {
         console.error('Error checking existing application:', error);
