@@ -709,7 +709,7 @@ export default function ApplicationForm(){
                   </div>
 
                     {isModalOpen && (
-                      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                      <div className="fixed inset-0 bg-black/70 bg-opacity-50 flex items-center justify-center z-50 p-4">
                         <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[80vh] overflow-hidden">
                           {/* Modal Header */}
                           <div className="flex items-center justify-between p-6 border-b">
@@ -723,7 +723,7 @@ export default function ApplicationForm(){
                           </div>
 
                           {/* Modal Content */}
-                          <div className="p-6 overflow-y-auto max-h-[60vh]">
+                          <div className="p-6 overflow-y-auto max-h-[70vh]">
                             <p className="text-gray-700 leading-relaxed">
                               I, the undersigned, acknowledge and agree that participating in or observing 
                               activities sponsored and/or offered by the Endless Grind Fitness gym involves 
