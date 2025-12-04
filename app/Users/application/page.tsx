@@ -709,8 +709,8 @@ export default function ApplicationForm(){
                   </div>
 
                     {isModalOpen && (
-                      <div className="fixed inset-0 bg-black/70 bg-opacity-50 flex items-center justify-center z-50 p-4">
-                        <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
+                      <div className="fixed inset-0 bg-opacity-50 flex items-center justify-center z-50 p-4">
+                        <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[80vh] overflow-hidden">
                           {/* Modal Header */}
                           <div className="flex items-center justify-between p-6 border-b">
                             <h2 className="text-2xl font-bold text-gray-900">WAIVER</h2>
