@@ -73,7 +73,7 @@ export default function About() {
                 {/* Circular Profile Image */}
                 <div className="relative w-64 h-64 rounded-full overflow-hidden mb-6 border-4 border-white/10">
                   <Image
-                    src="/pic5.png"
+                    src="/owner.jpg"
                     alt="CEO"
                     fill
                     className="object-cover w-full h-full"

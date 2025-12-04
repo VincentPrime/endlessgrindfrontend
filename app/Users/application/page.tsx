@@ -10,6 +10,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Usermobilesidebar } from "@/components/userssidebar/usermobilesidebar"
 import { createClient } from '@supabase/supabase-js';
+import { X } from "lucide-react"
 
 // Initialize Supabase client
 const supabase = createClient(
@@ -42,6 +43,7 @@ export default function ApplicationForm(){
     const [hasExistingApplication, setHasExistingApplication] = useState(false);
     const [existingAppStatus, setExistingAppStatus] = useState('');
     const [applicationId, setApplicationId] = useState<number | null>(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
     
     // NEW: States for ID picture upload
     const [idPictureFile, setIdPictureFile] = useState<File | null>(null);
@@ -66,7 +68,15 @@ export default function ApplicationForm(){
       payment_method: '',
       id_picture_url: ''  // NEW: Will store the Supabase URL
     });
-  
+
+  const openModal = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
     useEffect(() => {
       fetchPackagesAndCoaches();
       checkExistingApplication();
@@ -687,10 +697,58 @@ export default function ApplicationForm(){
                       />
                       <span className="text-sm text-gray-700">
                         I accept the waiver and understand the risks associated with physical training.
-                        I confirm that all information provided is accurate. *
+                        I confirm that all information provided is accurate{' '}
+                        <button
+                          onClick={openModal}
+                          className="text-blue-600 hover:text-blue-800 underline font-medium"
+                        >
+                          see more
+                        </button> *
                       </span>
                     </label>
                   </div>
+
+                    {isModalOpen && (
+                      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                        <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[80vh] overflow-hidden">
+                          {/* Modal Header */}
+                          <div className="flex items-center justify-between p-6 border-b">
+                            <h2 className="text-2xl font-bold text-gray-900">WAIVER</h2>
+                            <button
+                              onClick={closeModal}
+                              className="text-gray-400 hover:text-gray-600 transition-colors"
+                            >
+                              <X size={24} />
+                            </button>
+                          </div>
+
+                          {/* Modal Content */}
+                          <div className="p-6 overflow-y-auto max-h-[60vh]">
+                            <p className="text-gray-700 leading-relaxed">
+                              I, the undersigned, acknowledge and agree that participating in or observing 
+                              activities sponsored and/or offered by the Endless Grind Fitness gym involves 
+                              inherent risks. I voluntarily assume full responsibility and liability for these 
+                              risks, including any injuries that may occur as a result, even if such injuries 
+                              arise in a manner not foreseeable at the time of signing this agreement. I 
+                              understand that by voluntarily assuming these risks, I am solely responsible for 
+                              any loss or damage I may sustain, including personal injuries. Furthermore, I 
+                              acknowledge that my membership is non-transferable and cannot be assigned to 
+                              another person.
+                            </p>
+                          </div>
+
+                          {/* Modal Footer */}
+                          <div className="flex justify-end p-6 border-t">
+                            <button
+                              onClick={closeModal}
+                              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                            >
+                              Close
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
 
                   {/* Submit Button */}
                   <div className="flex gap-4">
