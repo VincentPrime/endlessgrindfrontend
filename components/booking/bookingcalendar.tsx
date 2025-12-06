@@ -1,5 +1,5 @@
 "use client"
-import { useState, useEffect } from 'react';
+import { useState, useEffect,useCallback  } from 'react';
 
 interface BookedSlot {
   booking_id: number;
@@ -51,32 +51,32 @@ export function BookingCalendar({ applicationId, coachId, onBookingSuccess }: Bo
 
   const timeSlots = generateTimeSlots();
 
-  useEffect(() => {
-    if (selectedDate) {
-      fetchAvailability();
+const fetchAvailability = useCallback(async () => {
+  setLoading(true);
+  try {
+    const response = await fetch(
+      `/api/bookings/coach-availability/${coachId}?date=${selectedDate}`,
+      { credentials: 'include' }
+    );
+    
+    const data = await response.json();
+    
+    if (data.success) {
+      setCoach(data.coach);
+      setBookedSlots(data.booked_slots || []);
     }
-  }, [selectedDate]);
+  } catch (error) {
+    console.error('Error fetching availability:', error);
+  } finally {
+    setLoading(false);
+  }
+}, [coachId, selectedDate]); // Dependencies: coachId and selectedDate
 
-  const fetchAvailability = async () => {
-    setLoading(true);
-    try {
-      const response = await fetch(
-        `/api/bookings/coach-availability/${coachId}?date=${selectedDate}`,
-        { credentials: 'include' }
-      );
-      
-      const data = await response.json();
-      
-      if (data.success) {
-        setCoach(data.coach);
-        setBookedSlots(data.booked_slots || []);
-      }
-    } catch (error) {
-      console.error('Error fetching availability:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+useEffect(() => {
+  if (selectedDate) {
+    fetchAvailability();
+  }
+}, [selectedDate, fetchAvailability]);
 
   const isSlotBooked = (timeSlot: string) => {
     return bookedSlots.some(slot => slot.start_time === timeSlot);
