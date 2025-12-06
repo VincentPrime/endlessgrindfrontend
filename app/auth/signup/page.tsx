@@ -12,6 +12,8 @@ import { Separator } from "@radix-ui/react-separator";
 import { useIsMobile } from "@/hooks/use-mobile";
 import Swal from "sweetalert2";
 import { Sideheader } from "@/components/sideheader/sideheader";
+import { Privacy } from "@/components/privacy/privacy";
+import { Conditions } from "@/components/privacy/conditions";
 
 interface ErrorResponse {
   message?: string;
@@ -41,6 +43,7 @@ export default function Signup() {
   const [otp, setOtp] = useState("");
   const [timeLeft, setTimeLeft] = useState(120); // 2 minutes
   const [canResend, setCanResend] = useState(false);
+
 
   // 🆕 COUNTDOWN TIMER
   useEffect(() => {
@@ -296,13 +299,15 @@ export default function Signup() {
 
               <div className="w-full text-center text-[#c7c7c7]">
                 <Separator className="bg-[#c7c7c7] h-0.5 w-full" />
-                <h1>
-                  By creating an account, you agree to Endless Grind{" "}
-                  <span className="text-amber-400">Conditions of Use</span> and{" "}
-                  <span className="text-amber-400">Privacy Notice.</span>
-                </h1>
+              <h1>
+                By creating an account, you agree to Endless Grind
+                <span className="inline-flex"><Conditions /></span>and
+                <span className="inline-flex"><Privacy /></span>
+
                 <h1>Endless Grind. All Rights Reserved.</h1>
-              </div>
+              </h1>
+
+              </div> 
             </Card>
           </form>
         </Card>

@@ -14,6 +14,8 @@ import { useUser } from "@/context/AuthContext"
 import Footer from "@/components/Footer/footer"
 import { Sideheader } from "@/components/sideheader/sideheader";
 import Swal from "sweetalert2"
+import { Conditions } from "@/components/privacy/conditions"
+import { Privacy } from "@/components/privacy/privacy"
 
 interface ErrorResponse {
   message?: string;
@@ -28,6 +30,7 @@ export default function Login() {
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
   
   const handleLogin = async () => {
     setError("")
@@ -151,7 +154,7 @@ export default function Login() {
               />
               <Input
                 placeholder="Password"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 className="h-16 bg-white/20 mt-4 text-white placeholder:text-white"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -159,13 +162,26 @@ export default function Login() {
                 disabled={loading}
               />
 
-              <div className="w-full text-center xl:mt-2">
-                <Link 
-                  href="/auth/forgotpassword" 
-                  className="text-amber-400 hover:underline text-sm"
-                >
-                  Forgot Password?
-                </Link>
+              <div className="flex justify-between w-full xl:mt-5 xl:px-5">
+         
+                  <label className="flex items-center gap-2 text-amber-400 text-sm cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={showPassword}
+                      onChange={(e) => setShowPassword(e.target.checked)}
+                      className="w-4 h-4 cursor-pointer accent-amber-400"
+                    />
+                    Show password
+                  </label>
+            
+
+                  <Link 
+                    href="/auth/forgotpassword" 
+                    className="text-amber-400 hover:underline text-sm"
+                  >
+                    Forgot Password?
+                  </Link>
+        
               </div>
             </div>
 
@@ -194,11 +210,11 @@ export default function Login() {
             <div className="w-full text-center text-[#c7c7c7]">
               <Separator className="bg-[#c7c7c7] h-0.5 w-full" />
               <h1>
-                By creating an account, you agree to Endless Grind{" "}
-                <span className="text-amber-400">Conditions of Use</span> and
-                <span className="text-amber-400"> Privacy Notice.</span>
+                By creating an account, you agree to Endless Grind
+                <span className="inline-flex"><Conditions /></span>and
+                <span className="inline-flex"><Privacy /></span>
+                <h1>Endless Grind. All Rights Reserved.</h1>
               </h1>
-              <h1>Endless Grind. All Rights Reserved.</h1>
             </div>
           </Card>
         </Card>
