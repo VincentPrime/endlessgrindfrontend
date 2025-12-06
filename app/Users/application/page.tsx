@@ -77,6 +77,7 @@ export default function ApplicationForm(){
   const closeModal = () => {
     setIsModalOpen(false);
   };
+  
     useEffect(() => {
       fetchPackagesAndCoaches();
       checkExistingApplication();
@@ -146,7 +147,7 @@ export default function ApplicationForm(){
         const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
         const filePath = `pictures/${fileName}`;
 
-        // Upload to Supabase Storage
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { data, error } = await supabase.storage
           .from('promo')
           .upload(filePath, idPictureFile, {
@@ -560,9 +561,10 @@ export default function ApplicationForm(){
                           {idPicturePreview ? (
                             <div className="space-y-4">
                               <div className="relative w-full max-w-md mx-auto">
-                                <img
+                                <Image
                                   src={idPicturePreview}
                                   alt="ID Preview"
+                                  fill
                                   className="w-full h-auto rounded-lg border-2 border-gray-200"
                                 />
                               </div>

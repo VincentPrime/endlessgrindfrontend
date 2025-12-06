@@ -5,6 +5,7 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { useIsMobile } from "@/hooks/use-mobile";
 import Swal from 'sweetalert2';
 import { Adminmobilesidebar } from '@/components/adminsidebar/adminmobilesidebar';
+import Image from 'next/image';
 
 interface Application {
   application_id: number;
@@ -457,9 +458,10 @@ export default function ApplicationNotice() {
                   <div className="pb-4 border-b">
                     <p className="text-sm font-medium text-gray-700 mb-3">ID Picture for Verification</p>
                     <div className="relative w-full max-w-md mx-auto">
-                      <img
+                      <Image
                         src={selectedApp.id_picture_url}
                         alt="ID Verification"
+                        fill
                         className="w-full h-auto rounded-lg border-2 border-gray-300 shadow-sm hover:shadow-md transition-shadow"
                         onError={(e) => {
                           e.currentTarget.src = '/placeholder-id.png'; // Fallback image

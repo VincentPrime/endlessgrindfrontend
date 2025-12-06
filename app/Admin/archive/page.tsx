@@ -122,67 +122,67 @@ export default function ArchivedApplications() {
     }
   };
 
-  const handleDeleteAll = async () => {
-    if (archivedApps.length === 0) {
-      Swal.fire({
-        title: "No Archives",
-        text: "There are no archived applications to delete.",
-        icon: "info",
-      });
-      return;
-    }
+  // const handleDeleteAll = async () => {
+  //   if (archivedApps.length === 0) {
+  //     Swal.fire({
+  //       title: "No Archives",
+  //       text: "There are no archived applications to delete.",
+  //       icon: "info",
+  //     });
+  //     return;
+  //   }
 
-    const result = await Swal.fire({
-      title: "Delete ALL Archived Applications?",
-      html: `<p>This will <strong>permanently delete all ${archivedApps.length} archived application(s)</strong>.</p><p style="color: #d33; font-weight: bold;">This action CANNOT be undone!</p>`,
-      icon: "error",
-      showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
-      confirmButtonText: "Yes, delete all permanently!",
-      cancelButtonText: "Cancel"
-    });
+  //   const result = await Swal.fire({
+  //     title: "Delete ALL Archived Applications?",
+  //     html: `<p>This will <strong>permanently delete all ${archivedApps.length} archived application(s)</strong>.</p><p style="color: #d33; font-weight: bold;">This action CANNOT be undone!</p>`,
+  //     icon: "error",
+  //     showCancelButton: true,
+  //     confirmButtonColor: "#d33",
+  //     cancelButtonColor: "#3085d6",
+  //     confirmButtonText: "Yes, delete all permanently!",
+  //     cancelButtonText: "Cancel"
+  //   });
 
-    if (!result.isConfirmed) return;
+  //   if (!result.isConfirmed) return;
 
-    setActionLoading(true);
-    try {
-      const response = await fetch('/api/applications/archived/delete-all', {
-        method: "DELETE",
-        credentials: "include",
-      });
+  //   setActionLoading(true);
+  //   try {
+  //     const response = await fetch('/api/applications/archived/delete-all', {
+  //       method: "DELETE",
+  //       credentials: "include",
+  //     });
 
-      const data = await response.json();
+  //     const data = await response.json();
 
-      if (data.success) {
-        await Swal.fire({
-          title: "Deleted!",
-          text: `${data.deleted_count} archived application(s) permanently deleted.`,
-          icon: "success",
-          timer: 2000,
-          showConfirmButton: false,
-        });
+  //     if (data.success) {
+  //       await Swal.fire({
+  //         title: "Deleted!",
+  //         text: `${data.deleted_count} archived application(s) permanently deleted.`,
+  //         icon: "success",
+  //         timer: 2000,
+  //         showConfirmButton: false,
+  //       });
 
-        fetchArchivedApplications();
-        setSelectedIds(new Set());
-      } else {
-        Swal.fire({
-          title: "Error!",
-          text: data.message || "Failed to delete archived applications.",
-          icon: "error",
-        });
-      }
-    } catch (error) {
-      console.error("Error deleting all archives:", error);
-      Swal.fire({
-        title: "Error!",
-        text: "An unexpected error occurred.",
-        icon: "error",
-      });
-    } finally {
-      setActionLoading(false);
-    }
-  };
+  //       fetchArchivedApplications();
+  //       setSelectedIds(new Set());
+  //     } else {
+  //       Swal.fire({
+  //         title: "Error!",
+  //         text: data.message || "Failed to delete archived applications.",
+  //         icon: "error",
+  //       });
+  //     }
+  //   } catch (error) {
+  //     console.error("Error deleting all archives:", error);
+  //     Swal.fire({
+  //       title: "Error!",
+  //       text: "An unexpected error occurred.",
+  //       icon: "error",
+  //     });
+  //   } finally {
+  //     setActionLoading(false);
+  //   }
+  // };
 
   const handleDeleteSelected = async () => {
     if (selectedIds.size === 0) {

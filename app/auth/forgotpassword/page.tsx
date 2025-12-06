@@ -55,7 +55,7 @@ export default function ForgotPassword() {
       const checkRes = await axios.post("/api/auth/forgot-password/check-email", { email })
       
       if (checkRes.data.exists) {
-        // Send OTP
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const otpRes = await axios.post("/api/auth/forgot-password/send-otp", { email })
         Swal.fire({ title: "OTP Sent!", text: "Check your email for the verification code", icon: "success", timer: 2500, showConfirmButton: false })
         setStep('otp')
