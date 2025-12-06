@@ -56,7 +56,7 @@ export function UserSidebar() {
     : "/user.png";
 
   return (
-    <Sidebar className="py-4 pl-6 bg-blue-500">
+    <Sidebar className="py-4 pl-6">
       <SidebarHeader className="items-center mt-10 flex flex-col gap-2">
         <div className="w-28 h-28 overflow-hidden rounded-full border-2 border-[#00e751]">
           <Image
