@@ -721,17 +721,19 @@ export default function ApplicationNotice() {
                 {selectedApp.id_picture_url && (
                   <div className="pb-4 border-b">
                     <p className="text-sm font-medium text-gray-700 mb-3">ID Picture for Verification</p>
-                    <div className="relative w-full max-w-md mx-auto">
-                      <Image
-                        src={selectedApp.id_picture_url}
-                        alt="ID Verification"
-                        fill
-                        className="w-full h-auto rounded-lg border-2 border-gray-300 shadow-sm hover:shadow-md transition-shadow"
-                        onError={(e) => {
-                          e.currentTarget.src = '/placeholder-id.png';
-                          e.currentTarget.alt = 'ID image not available';
-                        }}
-                      />
+                    <div className="w-full max-w-md mx-auto">
+                      <div className="relative w-full" style={{ aspectRatio: '3/4', minHeight: '300px' }}>
+                        <Image
+                          src={selectedApp.id_picture_url}
+                          alt="ID Verification"
+                          fill
+                          className="rounded-lg border-2 border-gray-300 shadow-sm hover:shadow-md transition-shadow object-contain"
+                          onError={(e) => {
+                            e.currentTarget.src = '/placeholder-id.png';
+                            e.currentTarget.alt = 'ID image not available';
+                          }}
+                        />
+                      </div>
                       <a
                         href={selectedApp.id_picture_url}
                         target="_blank"
