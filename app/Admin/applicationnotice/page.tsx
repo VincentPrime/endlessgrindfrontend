@@ -20,7 +20,7 @@ interface Application {
   facebook: string;
   address: string;
   goal: string;
-  id_picture_url: string; // NEW: Added ID picture URL
+  id_picture_url: string;
   weight: number;
   height: number;
   package_id: number;
@@ -65,6 +65,261 @@ export default function ApplicationNotice() {
     } finally {
       setLoading(false);
     }
+  };
+
+  // NEW: Print/Download function
+  const handlePrintApplication = (app: Application) => {
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) {
+      alert('Please allow pop-ups to print the application');
+      return;
+    }
+
+    const printContent = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Application - ${app.name}</title>
+        <style>
+          * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+          }
+          body {
+            font-family: Arial, sans-serif;
+            padding: 40px;
+            line-height: 1.6;
+            color: #333;
+          }
+          .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 3px solid #2563eb;
+            padding-bottom: 20px;
+          }
+          .header h1 {
+            font-size: 28px;
+            color: #1e40af;
+            margin-bottom: 5px;
+          }
+          .header p {
+            color: #666;
+            font-size: 14px;
+          }
+          .status-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin: 10px 5px;
+            font-size: 14px;
+          }
+          .status-approved {
+            background-color: #dcfce7;
+            color: #166534;
+          }
+          .status-payment {
+            background-color: ${app.payment_status === 'completed' ? '#dcfce7' : '#fed7aa'};
+            color: ${app.payment_status === 'completed' ? '#166534' : '#9a3412'};
+          }
+          .section {
+            margin-bottom: 25px;
+            page-break-inside: avoid;
+          }
+          .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #1e40af;
+            margin-bottom: 12px;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 5px;
+          }
+          .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 15px;
+          }
+          .info-item {
+            padding: 10px;
+            background-color: #f9fafb;
+            border-radius: 5px;
+          }
+          .info-label {
+            font-size: 12px;
+            color: #6b7280;
+            font-weight: 600;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+          }
+          .info-value {
+            font-size: 15px;
+            color: #111827;
+            font-weight: 500;
+          }
+          .full-width {
+            grid-column: 1 / -1;
+          }
+          .id-picture {
+            text-align: center;
+            margin: 20px 0;
+            page-break-inside: avoid;
+          }
+          .id-picture img {
+            max-width: 400px;
+            max-height: 500px;
+            border: 2px solid #d1d5db;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+          }
+          .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid #e5e7eb;
+            text-align: center;
+            color: #6b7280;
+            font-size: 12px;
+          }
+          @media print {
+            body {
+              padding: 20px;
+            }
+            .status-badge {
+              border: 2px solid #333;
+            }
+          }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <h1>MEMBERSHIP APPLICATION</h1>
+          <p>Endless Grind Fitness</p>
+          <div style="margin-top: 15px;">
+            <span class="status-badge status-approved">✓ APPROVED</span>
+            <span class="status-badge status-payment">Payment: ${app.payment_status.toUpperCase()}</span>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-title">Personal Information</div>
+          <div class="info-grid">
+            <div class="info-item">
+              <div class="info-label">Full Name</div>
+              <div class="info-value">${app.name}</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">Nickname</div>
+              <div class="info-value">${app.nickname || 'N/A'}</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">Email</div>
+              <div class="info-value">${app.email}</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">Facebook</div>
+              <div class="info-value">${app.facebook || 'N/A'}</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">Age</div>
+              <div class="info-value">${app.age} years old</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">Date of Birth</div>
+              <div class="info-value">${new Date(app.date_of_birth).toLocaleDateString()}</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">Sex</div>
+              <div class="info-value">${app.sex}</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">Weight</div>
+              <div class="info-value">${app.weight ? `${app.weight} kg` : 'N/A'}</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">Height</div>
+              <div class="info-value">${app.height ? `${app.height} cm` : 'N/A'}</div>
+            </div>
+            <div class="info-item full-width">
+              <div class="info-label">Address</div>
+              <div class="info-value">${app.address || 'N/A'}</div>
+            </div>
+            <div class="info-item full-width">
+              <div class="info-label">Fitness Goal</div>
+              <div class="info-value">${app.goal}</div>
+            </div>
+          </div>
+        </div>
+
+        ${app.id_picture_url ? `
+        <div class="section">
+          <div class="section-title">ID Verification</div>
+          <div class="id-picture">
+            <img src="${app.id_picture_url}" alt="ID Picture" onerror="this.style.display='none'" />
+          </div>
+        </div>
+        ` : ''}
+
+        <div class="section">
+          <div class="section-title">Membership Details</div>
+          <div class="info-grid">
+            <div class="info-item">
+              <div class="info-label">Package</div>
+              <div class="info-value">${app.package_title}</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">Price</div>
+              <div class="info-value">₱${app.package_price.toLocaleString()}</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">Coach</div>
+              <div class="info-value">${app.coach_name}</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">Payment Status</div>
+              <div class="info-value">${app.payment_status.toUpperCase()}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-title">Application Timeline</div>
+          <div class="info-grid">
+            <div class="info-item">
+              <div class="info-label">Submitted On</div>
+              <div class="info-value">${new Date(app.submitted_at).toLocaleString()}</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">Approved On</div>
+              <div class="info-value">${app.reviewed_at ? new Date(app.reviewed_at).toLocaleString() : 'N/A'}</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">Reviewed By</div>
+              <div class="info-value">${app.reviewed_by_name || 'N/A'}</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">Application ID</div>
+              <div class="info-value">#${app.application_id}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="footer">
+          <p>This document was generated on ${new Date().toLocaleString()}</p>
+          <p>Endless Grind Fitness - Membership Application Record</p>
+        </div>
+
+        <script>
+          window.onload = function() {
+            window.print();
+          };
+        </script>
+      </body>
+      </html>
+    `;
+
+    printWindow.document.write(printContent);
+    printWindow.document.close();
   };
 
   const handleApprove = async (applicationId: number) => {
@@ -376,7 +631,7 @@ export default function ApplicationNotice() {
                       </>
                     )}
 
-                    {/* Approved applications */}
+                    {/* Approved applications - NOW WITH PRINT BUTTON */}
                     {app.application_status === 'approved' && (
                       <>
                         <span className="px-4 py-2 text-sm text-green-600 bg-green-50 rounded-md flex items-center gap-2">
@@ -385,6 +640,15 @@ export default function ApplicationNotice() {
                           </svg>
                           Approved on {app.reviewed_at ? new Date(app.reviewed_at).toLocaleDateString() : 'N/A'}
                         </span>
+                        <button
+                          onClick={() => handlePrintApplication(app)}
+                          className="px-4 py-2 text-sm bg-blue-500 text-white hover:bg-blue-600 rounded-md transition-colors flex items-center gap-2"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                          </svg>
+                          Print/Download
+                        </button>
                         <button
                           onClick={() => handleArchive(app.application_id)}
                           disabled={actionLoading}
@@ -428,7 +692,7 @@ export default function ApplicationNotice() {
           )}
         </div>
 
-        {/* Detail Modal */}
+        {/* Detail Modal - ALSO WITH PRINT BUTTON */}
         {selectedApp && (
           <div className="fixed inset-0 bg-black/70 bg-opacity-50 flex items-center justify-center z-50 p-4">
             <div className="bg-white rounded-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto p-6">
@@ -453,7 +717,7 @@ export default function ApplicationNotice() {
                   </span>
                 </div>
 
-                {/* NEW: ID Picture Display */}
+                {/* ID Picture Display */}
                 {selectedApp.id_picture_url && (
                   <div className="pb-4 border-b">
                     <p className="text-sm font-medium text-gray-700 mb-3">ID Picture for Verification</p>
@@ -464,7 +728,7 @@ export default function ApplicationNotice() {
                         fill
                         className="w-full h-auto rounded-lg border-2 border-gray-300 shadow-sm hover:shadow-md transition-shadow"
                         onError={(e) => {
-                          e.currentTarget.src = '/placeholder-id.png'; // Fallback image
+                          e.currentTarget.src = '/placeholder-id.png';
                           e.currentTarget.alt = 'ID image not available';
                         }}
                       />
@@ -576,8 +840,34 @@ export default function ApplicationNotice() {
                   </div>
                 )}
 
-                {/* Archive button for approved/declined applications */}
-                {(selectedApp.application_status === 'approved' || selectedApp.application_status === 'declined') && (
+                {/* Approved - Print button and Archive */}
+                {selectedApp.application_status === 'approved' && (
+                  <div className="flex gap-2 pt-4">
+                    <button
+                      onClick={() => handlePrintApplication(selectedApp)}
+                      className="flex-1 bg-blue-500 text-white py-3 rounded-md hover:bg-blue-600 transition-colors flex items-center justify-center gap-2"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                      </svg>
+                      Print/Download Application
+                    </button>
+                    <button
+                      onClick={() => handleArchive(selectedApp.application_id)}
+                      disabled={actionLoading}
+                      className="px-6 bg-orange-600 text-white py-3 rounded-md hover:bg-orange-700 disabled:bg-gray-400 flex items-center justify-center gap-2"
+                    >
+                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M4 3a2 2 0 100 4h12a2 2 0 100-4H4z" />
+                        <path fillRule="evenodd" d="M3 8h14v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8zm5 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" clipRule="evenodd" />
+                      </svg>
+                      {actionLoading ? 'Archiving...' : 'Archive'}
+                    </button>
+                  </div>
+                )}
+
+                {/* Declined - Archive button */}
+                {selectedApp.application_status === 'declined' && (
                   <div className="pt-4">
                     <button
                       onClick={() => handleArchive(selectedApp.application_id)}
