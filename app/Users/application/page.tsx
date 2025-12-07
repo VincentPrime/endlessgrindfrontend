@@ -559,8 +559,8 @@ export default function ApplicationForm(){
                           />
                           
                           {idPicturePreview ? (
-                            <div className="space-y-4">
-                              <div className="relative w-full" style={{ aspectRatio: '3/4', minHeight: '300px' }}>
+                            <div className="space-y-2">
+                              <div className="relative w-full" style={{ aspectRatio: '3/4', minHeight: '100px' }}>
                                 <Image
                                   src={idPicturePreview}
                                   alt="ID Preview"
