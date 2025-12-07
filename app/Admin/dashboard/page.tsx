@@ -113,9 +113,9 @@ export default function Dashboard() {
 
       console.log('All applications:', data.applications); // DEBUG
 
-      // Filter only approved applications with completed payment
+      // Filter only approved applications (regardless of payment status)
       const approvedApps = data.applications.filter(
-        (app: Application) => app.application_status === 'approved' && app.payment_status === 'completed'
+        (app: Application) => app.application_status === 'approved'
       );
 
       console.log('Approved apps:', approvedApps); // DEBUG
