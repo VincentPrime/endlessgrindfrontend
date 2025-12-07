@@ -104,21 +104,30 @@ export default function Dashboard() {
       });
       const data = await response.json();
 
+      console.log('API Response:', data); // DEBUG
+
       if (!data.success) {
         alert('Failed to fetch applications data');
         return;
       }
+
+      console.log('All applications:', data.applications); // DEBUG
 
       // Filter only approved applications with completed payment
       const approvedApps = data.applications.filter(
         (app: Application) => app.application_status === 'approved' && app.payment_status === 'completed'
       );
 
+      console.log('Approved apps:', approvedApps); // DEBUG
+      console.log('Number of approved apps:', approvedApps.length); // DEBUG
+
       // Calculate total revenue
       const totalRevenue = approvedApps.reduce(
-        (sum: number, app: Application) => sum + app.package_price, 
+        (sum: number, app: Application) => sum + Number(app.package_price || 0), 
         0
       );
+
+      console.log('Total Revenue:', totalRevenue); // DEBUG
 
       // Open print window
       const printWindow = window.open('', '_blank');
