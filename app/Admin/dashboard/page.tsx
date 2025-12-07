@@ -8,7 +8,7 @@ import { AppSidebar } from "@/components/adminsidebar/app-sidebar"
 import { useIsMobile } from "@/hooks/use-mobile"
 import RouteGuard from "@/components/protectedRoute/protectedRoutes"
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar } from 'recharts'
-import { Users, UserCheck, Package, } from 'lucide-react'
+import { Users, UserCheck, Package, Printer } from 'lucide-react'
 import { Adminmobilesidebar } from "@/components/adminsidebar/adminmobilesidebar"
 
 interface DashboardStats {
@@ -32,6 +32,21 @@ interface RevenueData {
   }[]
 }
 
+interface Application {
+  application_id: number
+  user_id: number
+  username: string
+  name: string
+  email: string
+  package_title: string
+  package_price: number
+  coach_name: string
+  payment_status: string
+  application_status: string
+  submitted_at: string
+  reviewed_at: string
+}
+
 export default function Dashboard() {
   const isMobile = useIsMobile()
   const [stats, setStats] = useState<DashboardStats | null>(null)
@@ -47,22 +62,17 @@ export default function Dashboard() {
     try {
       setLoading(true)
       
-      // ✅ FIXED: Using session-based auth with credentials: 'include'
-      // This sends the session cookie automatically
-      
-      // Fetch stats
       const statsRes = await fetch('/api/stats', {
         method: 'GET',
-        credentials: 'include', // ⭐ This is crucial for session cookies!
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json'
         }
       })
       
-      // Fetch revenue data
       const revenueRes = await fetch('/api/revenue', {
         method: 'GET',
-        credentials: 'include', // ⭐ This is crucial for session cookies!
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json'
         }
@@ -85,6 +95,235 @@ export default function Dashboard() {
       setLoading(false)
     }
   }
+
+  const handlePrintRevenue = async () => {
+    try {
+      // Fetch all applications
+      const response = await fetch('/api/applications/all', {
+        credentials: 'include'
+      });
+      const data = await response.json();
+
+      if (!data.success) {
+        alert('Failed to fetch applications data');
+        return;
+      }
+
+      // Filter only approved applications with completed payment
+      const approvedApps = data.applications.filter(
+        (app: Application) => app.application_status === 'approved' && app.payment_status === 'completed'
+      );
+
+      // Calculate total revenue
+      const totalRevenue = approvedApps.reduce(
+        (sum: number, app: Application) => sum + app.package_price, 
+        0
+      );
+
+      // Open print window
+      const printWindow = window.open('', '_blank');
+      if (!printWindow) {
+        alert('Please allow pop-ups to print the revenue report');
+        return;
+      }
+
+      const printContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>Revenue Report - Endless Grind Fitness</title>
+          <style>
+            * {
+              margin: 0;
+              padding: 0;
+              box-sizing: border-box;
+            }
+            body {
+              font-family: Arial, sans-serif;
+              padding: 40px;
+              line-height: 1.6;
+              color: #333;
+            }
+            .header {
+              text-align: center;
+              margin-bottom: 40px;
+              border-bottom: 3px solid #2563eb;
+              padding-bottom: 20px;
+            }
+            .header h1 {
+              font-size: 32px;
+              color: #1e40af;
+              margin-bottom: 5px;
+            }
+            .header p {
+              color: #666;
+              font-size: 16px;
+            }
+            .summary {
+              background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+              color: white;
+              padding: 30px;
+              border-radius: 10px;
+              margin-bottom: 30px;
+              text-align: center;
+            }
+            .summary h2 {
+              font-size: 18px;
+              font-weight: normal;
+              margin-bottom: 10px;
+              opacity: 0.9;
+            }
+            .summary .amount {
+              font-size: 48px;
+              font-weight: bold;
+              margin-bottom: 10px;
+            }
+            .summary .count {
+              font-size: 16px;
+              opacity: 0.9;
+            }
+            .section-title {
+              font-size: 22px;
+              font-weight: bold;
+              color: #1e40af;
+              margin: 30px 0 15px 0;
+              border-bottom: 2px solid #e5e7eb;
+              padding-bottom: 8px;
+            }
+            table {
+              width: 100%;
+              border-collapse: collapse;
+              margin-bottom: 30px;
+              background: white;
+              box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            }
+            th {
+              background-color: #2563eb;
+              color: white;
+              padding: 12px;
+              text-align: left;
+              font-weight: 600;
+              font-size: 14px;
+              text-transform: uppercase;
+            }
+            td {
+              padding: 12px;
+              border-bottom: 1px solid #e5e7eb;
+              font-size: 14px;
+            }
+            tr:hover {
+              background-color: #f9fafb;
+            }
+            .amount-cell {
+              font-weight: 600;
+              color: #059669;
+            }
+            .footer {
+              margin-top: 50px;
+              padding-top: 20px;
+              border-top: 2px solid #e5e7eb;
+              text-align: center;
+              color: #6b7280;
+              font-size: 12px;
+            }
+            @media print {
+              body {
+                padding: 20px;
+              }
+              .summary {
+                background: #667eea !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+              }
+              th {
+                background-color: #2563eb !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+              }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <h1>REVENUE REPORT</h1>
+            <p>Endless Grind Fitness - Membership Revenue Summary</p>
+            <p style="margin-top: 10px; font-size: 14px;">Generated on ${new Date().toLocaleDateString('en-US', { 
+              year: 'numeric', 
+              month: 'long', 
+              day: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit'
+            })}</p>
+          </div>
+
+          <div class="summary">
+            <h2>Total Revenue</h2>
+            <div class="amount">₱${totalRevenue.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+            <div class="count">${approvedApps.length} Approved Membership${approvedApps.length !== 1 ? 's' : ''}</div>
+          </div>
+
+          <div class="section-title">Approved Memberships</div>
+          
+          ${approvedApps.length > 0 ? `
+            <table>
+              <thead>
+                <tr>
+                  <th style="width: 5%;">#</th>
+                  <th style="width: 20%;">Member Name</th>
+                  <th style="width: 20%;">Package</th>
+                  <th style="width: 15%;">Coach</th>
+                  <th style="width: 15%;">Amount</th>
+                  <th style="width: 15%;">Date Approved</th>
+                  <th style="width: 10%;">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${approvedApps.map((app: Application, index: number) => `
+                  <tr>
+                    <td>${index + 1}</td>
+                    <td><strong>${app.name}</strong><br/><small style="color: #6b7280;">${app.email}</small></td>
+                    <td>${app.package_title}</td>
+                    <td>${app.coach_name}</td>
+                    <td class="amount-cell">₱${app.package_price.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                    <td>${app.reviewed_at ? new Date(app.reviewed_at).toLocaleDateString('en-US', { 
+                      year: 'numeric', 
+                      month: 'short', 
+                      day: 'numeric' 
+                    }) : 'N/A'}</td>
+                    <td><span style="background: #dcfce7; color: #166534; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 600;">PAID</span></td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          ` : `
+            <div style="text-align: center; padding: 40px; color: #6b7280;">
+              <p>No approved memberships found.</p>
+            </div>
+          `}
+
+          <div class="footer">
+            <p><strong>Endless Grind Fitness</strong></p>
+            <p>This is an automated revenue report generated from the admin dashboard</p>
+            <p style="margin-top: 5px;">For internal use only - Confidential</p>
+          </div>
+
+          <script>
+            window.onload = function() {
+              window.print();
+            };
+          </script>
+        </body>
+        </html>
+      `;
+
+      printWindow.document.write(printContent);
+      printWindow.document.close();
+
+    } catch (error) {
+      console.error('Error printing revenue report:', error);
+      alert('Failed to generate revenue report');
+    }
+  };
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-PH', {
@@ -176,15 +415,25 @@ export default function Dashboard() {
                     Total revenue from completed memberships
                   </p>
                 </div>
-                <div className="text-right">
-                  <p className="text-sm text-gray-500">Total Revenue</p>
-                  {loading ? (
-                    <div className="h-8 w-32 bg-gray-200 rounded animate-pulse mt-1" />
-                  ) : (
-                    <p className="text-3xl font-bold text-green-600">
-                      {formatCurrency(revenueData?.totalRevenue || 0)}
-                    </p>
-                  )}
+                <div className="flex items-center gap-4">
+                  <div className="text-right">
+                    <p className="text-sm text-gray-500">Total Revenue</p>
+                    {loading ? (
+                      <div className="h-8 w-32 bg-gray-200 rounded animate-pulse mt-1" />
+                    ) : (
+                      <p className="text-3xl font-bold text-green-600">
+                        {formatCurrency(revenueData?.totalRevenue || 0)}
+                      </p>
+                    )}
+                  </div>
+                  <button
+                    onClick={handlePrintRevenue}
+                    disabled={loading}
+                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+                  >
+                    <Printer className="h-4 w-4" />
+                    Print Report
+                  </button>
                 </div>
               </div>
 
