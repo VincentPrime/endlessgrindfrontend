@@ -560,12 +560,12 @@ export default function ApplicationForm(){
                           
                           {idPicturePreview ? (
                             <div className="space-y-2">
-                              <div className="relative w-full" style={{ aspectRatio: '3/4', minHeight: '100px' }}>
+                              <div className="relative w-full max-w-xs mx-auto" style={{ aspectRatio: '3/4', minHeight: '200px' }}>
                                 <Image
                                   src={idPicturePreview}
                                   alt="ID Preview"
                                   fill
-                                  className="rounded-lg border-2 border-gray-300 shadow-sm hover:shadow-md transition-shadow object-contain"
+                                  className=" w-full rounded-lg border-2 border-gray-300 shadow-sm hover:shadow-md transition-shadow object-contain"
                                 />
                               </div>
                               <button
