@@ -119,10 +119,10 @@ export default function ApplicationNotice() {
             background-color: #dcfce7;
             color: #166534;
           }
-          .status-payment {
-            background-color: ${app.payment_status === 'completed' ? '#dcfce7' : '#fed7aa'};
-            color: ${app.payment_status === 'completed' ? '#166534' : '#9a3412'};
-          }
+          // .status-payment {
+          //   background-color: ${app.payment_status === 'completed' ? '#dcfce7' : '#fed7aa'};
+          //   color: ${app.payment_status === 'completed' ? '#166534' : '#9a3412'};
+          // }
           .section {
             margin-bottom: 25px;
             page-break-inside: avoid;
@@ -197,7 +197,6 @@ export default function ApplicationNotice() {
           <p>Endless Grind Fitness</p>
           <div style="margin-top: 15px;">
             <span class="status-badge status-approved">✓ APPROVED</span>
-            <span class="status-badge status-payment">Payment: ${app.payment_status.toUpperCase()}</span>
           </div>
         </div>
 
@@ -275,10 +274,10 @@ export default function ApplicationNotice() {
               <div class="info-label">Coach</div>
               <div class="info-value">${app.coach_name}</div>
             </div>
-            <div class="info-item">
-              <div class="info-label">Payment Status</div>
-              <div class="info-value">${app.payment_status.toUpperCase()}</div>
-            </div>
+            // <div class="info-item">
+            //   <div class="info-label">Payment Status</div>
+            //   <div class="info-value">${app.payment_status.toUpperCase()}</div>
+            // </div>
           </div>
         </div>
 
@@ -499,15 +498,15 @@ export default function ApplicationNotice() {
     return badges[status as keyof typeof badges] || 'bg-gray-100 text-gray-800';
   };
 
-  const getPaymentBadge = (status: string) => {
-    const badges = {
-      pending: 'bg-orange-100 text-orange-800',
-      completed: 'bg-green-100 text-green-800',
-      refunded: 'bg-blue-100 text-blue-800',
-      failed: 'bg-red-100 text-red-800'
-    };
-    return badges[status as keyof typeof badges] || 'bg-gray-100 text-gray-800';
-  };
+  // const getPaymentBadge = (status: string) => {
+  //   const badges = {
+  //     pending: 'bg-orange-100 text-orange-800',
+  //     completed: 'bg-green-100 text-green-800',
+  //     refunded: 'bg-blue-100 text-blue-800',
+  //     failed: 'bg-red-100 text-red-800'
+  //   };
+  //   return badges[status as keyof typeof badges] || 'bg-gray-100 text-gray-800';
+  // };
 
   return (
     <SidebarProvider>
@@ -566,9 +565,7 @@ export default function ApplicationNotice() {
                       <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusBadge(app.application_status)}`}>
                         {app.application_status}
                       </span>
-                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${getPaymentBadge(app.payment_status)}`}>
-                        {app.payment_status}
-                      </span>
+                     {/* here */}
                     </div>
                   </div>
 
@@ -711,9 +708,6 @@ export default function ApplicationNotice() {
                 <div className="flex gap-2 pb-4 border-b">
                   <span className={`px-4 py-2 rounded-full text-sm font-medium ${getStatusBadge(selectedApp.application_status)}`}>
                     Status: {selectedApp.application_status}
-                  </span>
-                  <span className={`px-4 py-2 rounded-full text-sm font-medium ${getPaymentBadge(selectedApp.payment_status)}`}>
-                    Payment: {selectedApp.payment_status}
                   </span>
                 </div>
 
