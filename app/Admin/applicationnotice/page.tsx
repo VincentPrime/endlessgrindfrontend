@@ -270,10 +270,7 @@ export default function ApplicationNotice() {
               <div class="info-label">Coach</div>
               <div class="info-value">${app.coach_name}</div>
             </div>
-            // <div class="info-item">
-            //   <div class="info-label">Payment Status</div>
-            //   <div class="info-value">${app.payment_status.toUpperCase()}</div>
-            // </div>
+          
           </div>
         </div>
 
