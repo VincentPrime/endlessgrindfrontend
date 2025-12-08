@@ -119,10 +119,6 @@ export default function ApplicationNotice() {
             background-color: #dcfce7;
             color: #166534;
           }
-          // .status-payment {
-          //   background-color: ${app.payment_status === 'completed' ? '#dcfce7' : '#fed7aa'};
-          //   color: ${app.payment_status === 'completed' ? '#166534' : '#9a3412'};
-          // }
           .section {
             margin-bottom: 25px;
             page-break-inside: avoid;
