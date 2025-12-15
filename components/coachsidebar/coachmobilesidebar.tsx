@@ -53,7 +53,7 @@ export function Coachmobilesidebar() {
 
   const navItems = [
     { href: "/Coach/clients", label: "CLIENTS", icon: "nimbus:stats" },
-    { href: "/Coach/logs", label: "LOGS SESSIONS", icon: "lucide:notepadtext"},
+    { href: "/Coach/logs", label: "LOGS SESSIONS", icon: "lucide:notepad-text"},
     { href: "/Coach/Coachsettings", label: "SETTINGS", icon: "mdi:gear" },
   ];
 

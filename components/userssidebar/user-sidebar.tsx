@@ -15,6 +15,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useUser, isRegularUser } from "@/context/AuthContext";
 import axios from "axios";
 
+
 export function UserSidebar() {
   const pathname = usePathname();
   const router = useRouter();
@@ -24,10 +25,12 @@ export function UserSidebar() {
 
   const navItems = [
     { href: "/Users/schedule", label: "MY SCHEDULE", icon: "uis:schedule" },
+    { href: "/Users/progress", label: "PROGRESS", icon: "lucide:chart-no-axes-combined"},
     { href: "/Users/application", label: "APPLICATION", icon: "lucide:vote"},
     {href: "/Users/sales", label: "PROMO & PACKAGES", icon: "lucide:megaphone"},
     { href: "/Users/settings", label: "SETTINGS", icon: "mdi:gear"},
   ];
+
 
   const handleLogout = async () => {
     try {
