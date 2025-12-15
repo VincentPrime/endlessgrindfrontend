@@ -25,6 +25,7 @@ export function UserSidebar() {
   const navItems = [
     { href: "/Users/schedule", label: "MY SCHEDULE", icon: "uis:schedule" },
     { href: "/Users/application", label: "APPLICATION", icon: "lucide:vote"},
+    {href: "/Users/sales", label: "PROMO & PACKAGES", icon: "lucide:megaphone"},
     { href: "/Users/settings", label: "SETTINGS", icon: "mdi:gear"},
   ];
 
@@ -33,7 +34,6 @@ export function UserSidebar() {
       const res = await axios.post("/api/auth/logout", {}, { withCredentials: true });
 
       if (res.status === 200) {
-        await logout();
         router.push("/auth/login");
       } else {
         alert("Logout failed");

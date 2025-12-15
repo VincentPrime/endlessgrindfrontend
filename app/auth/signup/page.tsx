@@ -303,7 +303,6 @@ export default function Signup() {
                 By creating an account, you agree to Endless Grind
                 <span className="inline-flex"><Conditions /></span>and
                 <span className="inline-flex"><Privacy /></span>
-
                 <h1>Endless Grind. All Rights Reserved.</h1>
               </h1>
 
