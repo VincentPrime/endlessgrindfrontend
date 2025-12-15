@@ -295,14 +295,14 @@ export default function Sales(){
                           <>
                             <button 
                               onClick={() => scroll('left')}
-                              className="absolute left-0 md:left-2 top-1/2 -translate-y-1/2 z-10 bg-black/70 hover:bg-black/90 text-white p-2 md:p-3 rounded-full transition-colors"
+                              className="absolute left-0 md:left-2 top-1/2 -translate-y-1/2 z-10 bg-transparent text-white p-2 md:p-3 transition-colors"
                             >
                               <Icon icon="mdi:chevron-left" width="24" height="24" />
                             </button>
                             
                             <button 
                               onClick={() => scroll('right')}
-                              className="absolute right-0 md:right-2 top-1/2 -translate-y-1/2 z-10 bg-black/70 hover:bg-black/90 text-white p-2 md:p-3 rounded-full transition-colors"
+                              className="absolute right-0 md:right-2 top-1/2 -translate-y-1/2 z-10 bg-transparent text-white p-2 md:p-3 transition-colors"
                             >
                               <Icon icon="mdi:chevron-right" width="24" height="24" />
                             </button>
