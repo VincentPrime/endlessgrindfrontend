@@ -51,6 +51,7 @@ export function CoachSidebar() {
 
   const navItems = [
     { href: "/Coach/clients", label: "CLIENTS", icon: "nimbus:stats" },
+    { href: "/Coach/logs", label: "LOGS SESSIONS", icon: "lucide:NotepadText"},
     { href: "/Coach/Coachsettings", label: "SETTINGS", icon: "mdi:gear" },
   ];
 
@@ -59,7 +60,6 @@ export function CoachSidebar() {
       const res = await axios.post("/api/auth/logout", {}, { withCredentials: true });
 
       if (res.status === 200) {
-        await logout();
         router.push("/auth/login");
       } else {
         alert("Logout failed");

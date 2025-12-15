@@ -53,6 +53,7 @@ export function Coachmobilesidebar() {
 
   const navItems = [
     { href: "/Coach/clients", label: "CLIENTS", icon: "nimbus:stats" },
+    { href: "/Coach/logs", label: "LOGS SESSIONS", icon: "lucide:NotepadText"},
     { href: "/Coach/Coachsettings", label: "SETTINGS", icon: "mdi:gear" },
   ];
 
@@ -65,7 +66,6 @@ export function Coachmobilesidebar() {
       );
 
       if (res.status === 200) {
-        await logout();
         router.push("/auth/login");
       } else {
         alert("Logout failed");
