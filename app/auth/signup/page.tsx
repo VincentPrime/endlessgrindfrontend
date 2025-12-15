@@ -153,6 +153,19 @@ export default function Signup() {
         withCredentials: true,
       });
 
+      const userDataForAutofill = {
+        firstname: formData.firstname,
+        middlename: formData.middlename,
+        lastname: formData.lastname,
+        sex: formData.sex,
+        date_of_birth: formData.date_of_birth,
+        email: formData.email,
+        weight: formData.weight,
+        height: formData.height,
+        address: formData.address,
+      };
+      localStorage.setItem('signupData', JSON.stringify(userDataForAutofill));
+
       Swal.fire({
         text: "Account created successfully!",
         icon: "success",

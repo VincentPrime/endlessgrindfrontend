@@ -81,7 +81,54 @@ export default function ApplicationForm(){
     useEffect(() => {
       fetchPackagesAndCoaches();
       checkExistingApplication();
+      loadSignupData(); 
     }, []);
+
+  const loadSignupData = () => {
+  const storedData = localStorage.getItem('signupData');
+  
+  if (storedData) {
+    try {
+      const userData = JSON.parse(storedData);
+      
+      // Calculate age from date of birth
+      const calculateAge = (dob: string) => {
+        const birthDate = new Date(dob);
+        const today = new Date();
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const monthDiff = today.getMonth() - birthDate.getMonth();
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+          age--;
+        }
+        return age.toString();
+      };
+
+      // Construct full name
+      const fullName = [
+        userData.firstname,
+        userData.middlename,
+        userData.lastname
+      ].filter(Boolean).join(' ');
+
+      // Autofill the form
+      setFormData(prev => ({
+        ...prev,
+        name: fullName,
+        sex: userData.sex || '',
+        date_of_birth: userData.date_of_birth || '',
+        age: userData.date_of_birth ? calculateAge(userData.date_of_birth) : '',
+        email: userData.email || '',
+        weight: userData.weight || '',
+        height: userData.height || '',
+        address: userData.address || '',
+      }));
+
+      console.log('✅ Signup data loaded and autofilled');
+    } catch (error) {
+      console.error('Error parsing signup data:', error);
+    }
+  }
+};
 
     const checkExistingApplication = async () => {
       try {
