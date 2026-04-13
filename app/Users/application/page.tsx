@@ -244,7 +244,7 @@ export default function ApplicationForm(){
 
         if (data.success) {
           alert('Application cancelled successfully');
-          // window.location.reload();
+          window.location.reload();
         } else {
           alert(data.message || 'Failed to cancel application');
         }
