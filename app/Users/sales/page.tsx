@@ -113,10 +113,10 @@ export default function Sales(){
             {!isMobile && <UserSidebar />}
             <SidebarInset>
                 {isMobile && (
-          <header className="sticky top-0 z-50 bg-white flex shrink-0 items-center gap-2 border-b-2 px-5 py-2">
-            <Usermobilesidebar/>
-          </header>
-        )}
+                <header className="sticky top-0 z-50 bg-white flex shrink-0 items-center gap-2 border-b-2 px-5 py-2">
+                    <Usermobilesidebar/>
+                </header>
+                )}
 
         <div>
             <div className="mb-6 mt-2">
